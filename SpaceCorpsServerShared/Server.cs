@@ -1,54 +1,82 @@
-﻿using System.Net;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Net;
 using System.Net.WebSockets;
 using System.Text;
+using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Moq;
 
 namespace SpaceCorpsServerShared;
 
 public class Server
 {
-    HttpListener httpListener = new HttpListener();
-    public async Task Start(string[] args)
+    private readonly ILogger<Server> _logger;
+    private readonly HttpListener _httpListener;
+    private readonly ConcurrentDictionary<string, WebSocket> _clientConnections;
+
+    public Server() : this(NullLogger<Server>.Instance, 5000)
     {
-        httpListener.Prefixes.Add("http://localhost:5000/");
-        httpListener.Start();
+    }
 
-        Console.WriteLine("Server started at http://localhost:5000/");
+    public Server(ILogger<Server> logger, int port)
+    {
+        _logger = logger;
+        _httpListener = new HttpListener();
+        _httpListener.Prefixes.Add($"http://*:{port}/");
+        _clientConnections = new ConcurrentDictionary<string, WebSocket>();
+    }
 
-        while (true)
+    public async Task StartAsync(CancellationToken cancellationToken = default)
+    {
+        _httpListener.Start();
+        _logger.LogInformation("Server started.");
+        Console.WriteLine("Server started.");
+
+        while (!cancellationToken.IsCancellationRequested)
         {
-            HttpListenerContext context = await httpListener.GetContextAsync();
+            var context = await _httpListener.GetContextAsync();
             if (context.Request.IsWebSocketRequest)
             {
-                HttpListenerWebSocketContext webSocketContext = await context.AcceptWebSocketAsync(null);
-                Console.WriteLine("WebSocket connection established");
+                var webSocketContext = await context.AcceptWebSocketAsync(null);
+                var webSocket = webSocketContext.WebSocket;
+                var clientId = Guid.NewGuid().ToString();
 
-                await HandleConnectionAsync(webSocketContext.WebSocket);
-            }
-            else
-            {
-                context.Response.StatusCode = 400;
-                context.Response.Close();
+                if (_clientConnections.TryAdd(clientId, webSocket))
+                {
+                    _logger.LogInformation($"Client connected: {clientId}");
+                }
+
+                _ = HandleClientAsync(clientId, webSocket, cancellationToken);
             }
         }
     }
 
-    static async Task HandleConnectionAsync(WebSocket webSocket)
+    private async Task HandleClientAsync(string clientId, WebSocket webSocket, CancellationToken cancellationToken)
     {
-        byte[] buffer = new byte[1024];
-        while (webSocket.State == WebSocketState.Open)
+        try
         {
-            WebSocketReceiveResult result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-            if (result.MessageType == WebSocketMessageType.Close)
+            var buffer = new byte[1024];
+            while (webSocket.State == WebSocketState.Open && !cancellationToken.IsCancellationRequested)
             {
-                await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
+                var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), cancellationToken);
+                if (result.MessageType == WebSocketMessageType.Close)
+                {
+                    await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client initiated close", cancellationToken);
+                    _logger.LogInformation($"Client disconnected: {clientId}");
+                }
             }
-            else
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error handling client: {clientId}");
+        }
+        finally
+        {
+            if (_clientConnections.TryRemove(clientId, out _))
             {
-                string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                Console.WriteLine($"Received: {message}");
-                string response = $"Echo: {message}";
-                byte[] responseBytes = Encoding.UTF8.GetBytes(response);
-                await webSocket.SendAsync(new ArraySegment<byte>(responseBytes), WebSocketMessageType.Text, true, CancellationToken.None);
+                _logger.LogInformation($"Client removed: {clientId}");
             }
         }
     }

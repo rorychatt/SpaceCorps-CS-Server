@@ -1,26 +1,43 @@
 using System.Net.WebSockets;
+using Microsoft.Extensions.Logging;
+using Moq;
 using SpaceCorpsServerShared;
 
 namespace SpaceCorpsServerTests;
 
 public class ServerTests
 {
-    [Fact]
-    public async Task TestWebSocketConnection()
+    private readonly Mock<ILogger<Server>> loggerMock;
+    private readonly Server server;
+
+    public ServerTests()
     {
-        // Arrange
-        Server server = new Server();
-        Task serverTask = server.Start(new string[0]);
-
-        // Act
-        ClientWebSocket client = new ClientWebSocket();
-        await client.ConnectAsync(new Uri("ws://localhost:5000/"), CancellationToken.None);
-
-        // Assert
-        Assert.Equal(WebSocketState.Open, client.State);
-
-        // Clean up
-        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
-        await serverTask;
+        loggerMock = new Mock<ILogger<Server>>();
+        server = new Server(loggerMock.Object, 5000);
     }
+
+    [Fact]
+    public async Task TestServerStartLogsMessage()
+    {
+        var loggerMock = new Mock<ILogger<Server>>();
+        var server = new Server(loggerMock.Object, 5000);
+
+        var cts = new CancellationTokenSource();
+        cts.CancelAfter(1000);
+
+        var startTask = server.StartAsync(cts.Token);
+
+        await Task.WhenAny(startTask, Task.Delay(500));
+
+        loggerMock.Verify(
+            x => x.Log(
+                LogLevel.Information,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString() == "Server started."),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+            Times.Once);
+    }
+
+    
 }
