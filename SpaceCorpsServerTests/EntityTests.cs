@@ -1,5 +1,6 @@
 using System.Numerics;
 using SpaceCorpsServerShared.Entity;
+using SpaceCorpsServerShared.Item;
 
 namespace SpaceCorpsServerTests;
 
@@ -26,6 +27,45 @@ public class EntityTests
         var newPosition = new Vector3(1, 2, 3);
         player.Position = newPosition;
         Assert.Equal(newPosition, player.Position);
+    }
+
+    [Fact]
+    public void TestPlayer_Inventory_AddItem()
+    {
+        var player = new Player();
+        var item = new ShipItem();
+        player.AddItem(item);
+        Assert.Contains(item.ItemId, player.Inventory.Keys);
+    }
+
+    [Fact]
+    public void TestPlayer_Inventory_RemoveItem()
+    {
+        var player = new Player();
+        var item = new ShipItem();
+        player.AddItem(item);
+        player.RemoveItem(item);
+        Assert.DoesNotContain(item.ItemId, player.Inventory.Keys);
+    }
+
+    [Fact]
+    public void TestPlayer_Inventory_RemoveItem_NotFound()
+    {
+        var player = new Player();
+        var item = new ShipItem();
+        player.RemoveItem(item);
+        Assert.DoesNotContain(item.ItemId, player.Inventory.Keys);
+    }
+
+    [Fact]
+    public void TestPlayer_Inventory_RemoveItem_Empty()
+    {
+        var player = new Player();
+        var item = new ShipItem();
+        player.AddItem(item);
+        player.RemoveItem(item);
+        player.RemoveItem(item);
+        Assert.DoesNotContain(item.ItemId, player.Inventory.Keys);
     }
 
 }
