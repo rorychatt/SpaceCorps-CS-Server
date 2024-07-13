@@ -12,6 +12,9 @@ namespace SpaceCorpsServerShared;
 
 public class Server
 {
+
+    public IReadOnlyDictionary<string, WebSocket> ClientConnections => _clientConnections;
+
     private readonly ILogger<Server> _logger;
     private readonly HttpListener _httpListener;
     private readonly ConcurrentDictionary<string, WebSocket> _clientConnections;
@@ -32,7 +35,6 @@ public class Server
     {
         _httpListener.Start();
         _logger.LogInformation("Server started.");
-        Console.WriteLine("Server started.");
 
         while (!cancellationToken.IsCancellationRequested)
         {
@@ -42,21 +44,19 @@ public class Server
                 var webSocketContext = await context.AcceptWebSocketAsync(null);
                 var webSocket = webSocketContext.WebSocket;
                 var clientId = Guid.NewGuid().ToString();
-
-                if (_clientConnections.TryAdd(clientId, webSocket))
-                {
-                    _logger.LogInformation($"Client connected: {clientId}");
-                }
-
                 _ = HandleClientAsync(clientId, webSocket, cancellationToken);
             }
         }
     }
 
-    private async Task HandleClientAsync(string clientId, WebSocket webSocket, CancellationToken cancellationToken)
+    public async Task HandleClientAsync(string clientId, WebSocket webSocket, CancellationToken cancellationToken)
     {
         try
         {
+            if (_clientConnections.TryAdd(clientId, webSocket))
+            {
+                _logger.LogInformation($"Client connected: {clientId}");
+            }
             var buffer = new byte[1024];
             while (webSocket.State == WebSocketState.Open && !cancellationToken.IsCancellationRequested)
             {
@@ -79,5 +79,12 @@ public class Server
                 _logger.LogInformation($"Client removed: {clientId}");
             }
         }
+    }
+
+    public void Stop()
+    {
+        _httpListener.Stop();
+        _httpListener.Close();
+        _logger.LogInformation("Server stopped.");
     }
 }
