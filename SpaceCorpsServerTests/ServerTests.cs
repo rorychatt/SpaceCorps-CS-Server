@@ -17,7 +17,7 @@ public class ServerTests
     }
 
     [Fact]
-    public async Task TestServerStartLogsMessage()
+    public void TestServer_Start_Logs_Message()
     {
         var cts = new CancellationTokenSource();
         cts.CancelAfter(1000);
@@ -30,12 +30,12 @@ public class ServerTests
                 It.IsAny<EventId>(),
                 It.Is<It.IsAnyType>((v, t) => v.ToString() == "Server started."),
                 It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
             Times.Once);
     }
 
     [Fact]
-    public async Task TestServerLogsClientConnectedMessage()
+    public async Task TestServer_Logs_ClientConnected_Message()
     {
         var loggerMock = new Mock<ILogger<Server>>();
         var server = new Server(loggerMock.Object, 5000);
@@ -53,7 +53,7 @@ public class ServerTests
                 It.IsAny<EventId>(),
                 It.Is<It.IsAnyType>((v, t) => v.ToString() == $"Client connected: {clientId}"),
                 It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
             Times.Once);
     }
 }
