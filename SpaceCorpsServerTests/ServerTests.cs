@@ -56,4 +56,43 @@ public class ServerTests
                 It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
             Times.Once);
     }
+
+    [Fact]
+    public async Task TestServer_Adds_Player_On_Client_Connect()
+    {
+        var loggerMock = new Mock<ILogger<Server>>();
+        var server = new Server(loggerMock.Object, 5000);
+
+        var webSocketMock = new Mock<WebSocket>();
+        webSocketMock.Setup(x => x.State).Returns(WebSocketState.Open);
+
+        var clientId = Guid.NewGuid().ToString();
+
+        await server.HandleClientAsync(clientId, webSocketMock.Object, CancellationToken.None);
+
+        Assert.True(server.GetPlayers().ContainsKey(clientId));
+    }
+
+    [Fact]
+    public async Task TestServer_Removes_Player_On_Client_Disconnect()
+    {
+        var loggerMock = new Mock<ILogger<Server>>();
+        var server = new Server(loggerMock.Object, 5000);
+
+        var webSocketMock = new Mock<WebSocket>();
+        webSocketMock.Setup(x => x.State).Returns(WebSocketState.Open);
+
+        var clientId = Guid.NewGuid().ToString();
+
+        await server.HandleClientAsync(clientId, webSocketMock.Object, CancellationToken.None);
+
+        webSocketMock.Setup(x => x.State).Returns(WebSocketState.Closed);
+
+        await server.HandleClientAsync(clientId, webSocketMock.Object, CancellationToken.None);
+
+        Assert.False(server.GetPlayers().ContainsKey(clientId));
+    }
+
+
+
 }

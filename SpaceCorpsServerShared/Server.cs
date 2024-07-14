@@ -7,17 +7,16 @@ using Castle.Core.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using SpaceCorpsServerShared.Entity;
 
 namespace SpaceCorpsServerShared;
 
 public class Server
 {
-
-    public IReadOnlyDictionary<string, WebSocket> ClientConnections => _clientConnections;
-
     private readonly ILogger<Server> _logger;
     private readonly HttpListener _httpListener;
     private readonly ConcurrentDictionary<string, WebSocket> _clientConnections;
+    private readonly ConcurrentDictionary<string, Player> _players;
 
     public Server() : this(NullLogger<Server>.Instance, 5000)
     {
@@ -29,6 +28,7 @@ public class Server
         _httpListener = new HttpListener();
         _httpListener.Prefixes.Add($"http://*:{port}/");
         _clientConnections = new ConcurrentDictionary<string, WebSocket>();
+        _players = new ConcurrentDictionary<string, Player>();
     }
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
@@ -53,10 +53,10 @@ public class Server
     {
         try
         {
-            if (_clientConnections.TryAdd(clientId, webSocket))
-            {
-                _logger.LogInformation($"Client connected: {clientId}");
-            }
+            _AddClientConnection(clientId, webSocket);
+            _AddPlayer(clientId, new Player());
+
+            var player = new Player();
             var buffer = new byte[1024];
             while (webSocket.State == WebSocketState.Open && !cancellationToken.IsCancellationRequested)
             {
@@ -74,10 +74,7 @@ public class Server
         }
         finally
         {
-            if (_clientConnections.TryRemove(clientId, out _))
-            {
-                _logger.LogInformation($"Client removed: {clientId}");
-            }
+            _DisconnectClient(clientId);
         }
     }
 
@@ -87,4 +84,49 @@ public class Server
         _httpListener.Close();
         _logger.LogInformation("Server stopped.");
     }
+
+    public ConcurrentDictionary<string, Player> GetPlayers()
+    {
+        return _players;
+    }
+
+    public ConcurrentDictionary<string, WebSocket> GetClientConnections()
+    {
+        return _clientConnections;
+    }
+
+    private void _AddPlayer(string clientId, Player player)
+    {
+        if (_players.TryAdd(clientId, player))
+        {
+            _logger.LogInformation($"Player added: {clientId}");
+        }
+    }
+
+    private void _RemovePlayer(string clientId)
+    {
+        if (_players.TryRemove(clientId, out _))
+        {
+            _logger.LogInformation($"Player removed: {clientId}");
+        }
+    }
+
+    private void _AddClientConnection(string clientId, WebSocket webSocket)
+    {
+        if (_clientConnections.TryAdd(clientId, webSocket))
+        {
+            _logger.LogInformation($"Client connected: {clientId}");
+        }
+    }
+
+    private void _DisconnectClient(string clientId)
+    {
+        if (_clientConnections.TryRemove(clientId, out _))
+        {
+            _logger.LogInformation($"Client removed: {clientId}");
+        }
+
+        _RemovePlayer(clientId);
+    }
+
 }
