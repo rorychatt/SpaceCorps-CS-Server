@@ -1,132 +1,117 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Net;
 using System.Net.WebSockets;
+using System.Runtime.InteropServices;
 using System.Text;
-using Castle.Core.Logging;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using Moq;
 using SpaceCorpsServerShared.Entity;
-
-namespace SpaceCorpsServerShared;
 
 public class Server
 {
+    private static ConcurrentDictionary<Guid, Player> players = new ConcurrentDictionary<Guid, Player>();
+    private static ConcurrentDictionary<Guid, WebSocket> sockets = new ConcurrentDictionary<Guid, WebSocket>();
     private readonly ILogger<Server> _logger;
-    private readonly HttpListener _httpListener;
-    private readonly ConcurrentDictionary<string, WebSocket> _clientConnections;
-    private readonly ConcurrentDictionary<string, Player> _players;
-
-    public Server() : this(NullLogger<Server>.Instance, 5000)
-    {
-    }
+    public int _port { get; }
 
     public Server(ILogger<Server> logger, int port)
     {
         _logger = logger;
-        _httpListener = new HttpListener();
-        _httpListener.Prefixes.Add($"http://*:{port}/");
-        _clientConnections = new ConcurrentDictionary<string, WebSocket>();
-        _players = new ConcurrentDictionary<string, Player>();
+        _port = port;
     }
 
-    public async Task StartAsync(CancellationToken cancellationToken = default)
+    public Server()
     {
-        _httpListener.Start();
-        _logger.LogInformation("Server started.");
+        _logger = new LoggerFactory().CreateLogger<Server>();
+    }
+    public async Task StartAsync(string[] args)
+    {
+        HttpListener httpListener = new HttpListener();
+        httpListener.Prefixes.Add($"http://localhost:{_port}/");
+        httpListener.Start();
+        _logger.LogInformation($"Server started at http://localhost:{_port}/");
 
-        while (!cancellationToken.IsCancellationRequested)
+        Task listenTask = ListenForConnectionsAsync(httpListener);
+
+        await Task.WhenAll(listenTask);
+    }
+
+    public async Task ListenForConnectionsAsync(HttpListener httpListener)
+    {
+        while (true)
         {
-            var context = await _httpListener.GetContextAsync();
-            if (context.Request.IsWebSocketRequest)
+            HttpListenerContext httpContext = await httpListener.GetContextAsync();
+            if (httpContext.Request.IsWebSocketRequest)
             {
-                var webSocketContext = await context.AcceptWebSocketAsync(null);
-                var webSocket = webSocketContext.WebSocket;
-                var clientId = Guid.NewGuid().ToString();
-                _ = HandleClientAsync(clientId, webSocket, cancellationToken);
+                HttpListenerWebSocketContext webSocketContext = await httpContext.AcceptWebSocketAsync(null);
+                _logger.LogInformation("WebSocket connection established");
+
+                WebSocket webSocket = webSocketContext.WebSocket;
+                Guid playerId = Guid.NewGuid();
+                Player player = new Player(playerId);
+                players[playerId] = player;
+                sockets[playerId] = webSocket;
+
+                await HandleWebSocketConnectionAsync(player);
+            }
+            else
+            {
+                httpContext.Response.StatusCode = 400;
+                httpContext.Response.Close();
             }
         }
     }
-
-    public async Task HandleClientAsync(string clientId, WebSocket webSocket, CancellationToken cancellationToken)
+    public async Task HandleWebSocketConnectionAsync(Player player)
     {
-        try
-        {
-            _AddClientConnection(clientId, webSocket);
-            _AddPlayer(clientId, new Player());
+        WebSocket webSocket = sockets[player.Id];
+        byte[] buffer = new byte[1024 * 4];
+        WebSocketReceiveResult result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
 
-            var player = new Player();
-            var buffer = new byte[1024];
-            while (webSocket.State == WebSocketState.Open && !cancellationToken.IsCancellationRequested)
+        while (result.MessageType != WebSocketMessageType.Close)
+        {
+            string receivedMessage = Encoding.UTF8.GetString(buffer, 0, result.Count);
+            _logger.LogInformation($"Received from {player.Id}: {receivedMessage}");
+
+            string responseMessage = $"Echo from {player.Id}: {receivedMessage}";
+            byte[] responseBuffer = Encoding.UTF8.GetBytes(responseMessage);
+            await webSocket.SendAsync(new ArraySegment<byte>(responseBuffer), WebSocketMessageType.Text, true, CancellationToken.None);
+
+            result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+        }
+
+        await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
+        _logger.LogInformation($"WebSocket connection closed for player {player.Id}");
+
+        players.TryRemove(player.Id, out _);
+    }
+    public async Task DisconnectPlayer(Guid playerId)
+    {
+        if (players.TryGetValue(playerId, out _))
+        {
+            var socket = sockets[playerId];
+            await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Disconnected by server", CancellationToken.None);
+            _logger.LogInformation($"Player {playerId} has been disconnected");
+
+            players.TryRemove(playerId, out _);
+            sockets.TryRemove(playerId, out _);
+        }
+    }
+
+    public IEnumerable<Player> GetPlayers()
+    {
+        return players.Values;
+    }
+
+    public static void Stop()
+    {
+        foreach (var socket in sockets.Values)
+        {
+            if (socket.State == WebSocketState.Open)
             {
-                var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), cancellationToken);
-                if (result.MessageType == WebSocketMessageType.Close)
-                {
-                    await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client initiated close", cancellationToken);
-                    _logger.LogInformation($"Client disconnected: {clientId}");
-                }
+                _ = socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Server stopped", CancellationToken.None);
             }
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Error handling client: {clientId}");
-        }
-        finally
-        {
-            _DisconnectClient(clientId);
-        }
+
+        sockets.Clear();
+        players.Clear();
     }
-
-    public void Stop()
-    {
-        _httpListener.Stop();
-        _httpListener.Close();
-        _logger.LogInformation("Server stopped.");
-    }
-
-    public ConcurrentDictionary<string, Player> GetPlayers()
-    {
-        return _players;
-    }
-
-    public ConcurrentDictionary<string, WebSocket> GetClientConnections()
-    {
-        return _clientConnections;
-    }
-
-    private void _AddPlayer(string clientId, Player player)
-    {
-        if (_players.TryAdd(clientId, player))
-        {
-            _logger.LogInformation($"Player added: {clientId}");
-        }
-    }
-
-    private void _RemovePlayer(string clientId)
-    {
-        if (_players.TryRemove(clientId, out _))
-        {
-            _logger.LogInformation($"Player removed: {clientId}");
-        }
-    }
-
-    private void _AddClientConnection(string clientId, WebSocket webSocket)
-    {
-        if (_clientConnections.TryAdd(clientId, webSocket))
-        {
-            _logger.LogInformation($"Client connected: {clientId}");
-        }
-    }
-
-    private void _DisconnectClient(string clientId)
-    {
-        if (_clientConnections.TryRemove(clientId, out _))
-        {
-            _logger.LogInformation($"Client removed: {clientId}");
-        }
-
-        _RemovePlayer(clientId);
-    }
-
 }

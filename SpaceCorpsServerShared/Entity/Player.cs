@@ -7,15 +7,18 @@ namespace SpaceCorpsServerShared.Entity
 {
     public class Player : IEntity
     {
-        public Guid Id { get; init; }
+        public Guid Id { get; }
         public Vector3 Position { get; set; }
         public Dictionary<int, IItem> Inventory { get; } = new Dictionary<int, IItem>();
 
-        public Player()
+        public Player(Guid id)
         {
-            Id = Guid.NewGuid();
+            Id = id;
             _loadDefaultSettings();
         }
+
+        public Player() : this(Guid.NewGuid()) { }
+
         private void _loadDefaultSettings()
         {
             Position = Vector3.Zero;
