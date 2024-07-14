@@ -8,8 +8,8 @@ using SpaceCorpsServerShared.Entity;
 
 public class Server
 {
-    private static ConcurrentDictionary<Guid, Player> players = new ConcurrentDictionary<Guid, Player>();
-    private static ConcurrentDictionary<Guid, WebSocket> sockets = new ConcurrentDictionary<Guid, WebSocket>();
+    private ConcurrentDictionary<Guid, Player> players = new ConcurrentDictionary<Guid, Player>();
+    private ConcurrentDictionary<Guid, WebSocket> sockets = new ConcurrentDictionary<Guid, WebSocket>();
     private readonly ILogger<Server> _logger;
     public int _port { get; }
 
@@ -101,7 +101,7 @@ public class Server
         return players.Values;
     }
 
-    public static void Stop()
+    public void Stop()
     {
         foreach (var socket in sockets.Values)
         {
@@ -113,5 +113,7 @@ public class Server
 
         sockets.Clear();
         players.Clear();
+
+        _logger.LogInformation("Server stopped");
     }
 }
