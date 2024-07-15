@@ -39,7 +39,7 @@ public class ServerTests
 
         _ = server.StartAsync([]);
         var client = new ClientWebSocket();
-        client.ConnectAsync(new Uri($"ws://localhost:{port}"), CancellationToken.None).Wait();
+        client.ConnectAsync(new Uri($"ws://localhost:{port}"), CancellationToken.None);
         Assert.Equal(WebSocketState.Open, client.State);
 
         server.Stop();
@@ -54,7 +54,7 @@ public class ServerTests
 
         _ = server.StartAsync([]);
         var client = new ClientWebSocket();
-        client.ConnectAsync(new Uri($"ws://localhost:{port}"), CancellationToken.None).Wait();
+        client.ConnectAsync(new Uri($"ws://localhost:{port}"), CancellationToken.None);
         Assert.Equal(WebSocketState.Open, client.State);
         server.GetPlayers().Count().Equals(1);
         server.Stop();
@@ -84,7 +84,7 @@ public class ServerTests
     }
 
     [Fact]
-    public async void TestServer_Prints_ServerStopped_Message()
+    public void TestServer_Prints_ServerStopped_Message()
     {
         var port = 1004;
         var loggerMock = new Mock<ILogger<Server>>();
@@ -92,7 +92,7 @@ public class ServerTests
 
         _ = server.StartAsync([]);
         server.Stop();
-        
+
         loggerMock.Verify(
             x => x.Log(
                 LogLevel.Information,

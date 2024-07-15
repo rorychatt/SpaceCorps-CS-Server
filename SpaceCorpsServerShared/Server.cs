@@ -4,9 +4,10 @@ using System.Net.WebSockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Extensions.Logging;
+using SpaceCorpsServerShared;
 using SpaceCorpsServerShared.Entity;
 
-public class Server
+public class Server : IServer
 {
     private ConcurrentDictionary<Guid, Player> players = new ConcurrentDictionary<Guid, Player>();
     private ConcurrentDictionary<Guid, WebSocket> sockets = new ConcurrentDictionary<Guid, WebSocket>();
@@ -25,14 +26,14 @@ public class Server
     }
     public async Task StartAsync(string[] args)
     {
-        HttpListener httpListener = new HttpListener();
+        HttpListener httpListener = new();
         httpListener.Prefixes.Add($"http://localhost:{_port}/");
         httpListener.Start();
-        _logger.LogInformation($"Server started at http://localhost:{_port}/");
+        _logger.LogInformation("Server started at http://localhost:{Port}/", _port);
 
         Task listenTask = ListenForConnectionsAsync(httpListener);
 
-        await Task.WhenAll(listenTask);
+        await listenTask;
     }
 
     public async Task ListenForConnectionsAsync(HttpListener httpListener)
@@ -47,7 +48,7 @@ public class Server
 
                 WebSocket webSocket = webSocketContext.WebSocket;
                 Guid playerId = Guid.NewGuid();
-                Player player = new Player(playerId);
+                Player player = new(playerId);
                 players[playerId] = player;
                 sockets[playerId] = webSocket;
 
@@ -69,7 +70,7 @@ public class Server
         while (result.MessageType != WebSocketMessageType.Close)
         {
             string receivedMessage = Encoding.UTF8.GetString(buffer, 0, result.Count);
-            _logger.LogInformation($"Received from {player.Id}: {receivedMessage}");
+            _logger.LogInformation("Received from {PlayerId}: {ReceivedMessage}", player.Id, receivedMessage);
 
             string responseMessage = $"Echo from {player.Id}: {receivedMessage}";
             byte[] responseBuffer = Encoding.UTF8.GetBytes(responseMessage);
@@ -79,7 +80,7 @@ public class Server
         }
 
         await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
-        _logger.LogInformation($"WebSocket connection closed for player {player.Id}");
+        _logger.LogInformation("WebSocket connection closed for player {PlayerId}", player.Id);
 
         players.TryRemove(player.Id, out _);
     }
@@ -89,7 +90,7 @@ public class Server
         {
             var socket = sockets[playerId];
             await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Disconnected by server", CancellationToken.None);
-            _logger.LogInformation($"Player {playerId} has been disconnected");
+            _logger.LogInformation("Player {PlayerId} has been disconnected", playerId);
 
             players.TryRemove(playerId, out _);
             sockets.TryRemove(playerId, out _);
