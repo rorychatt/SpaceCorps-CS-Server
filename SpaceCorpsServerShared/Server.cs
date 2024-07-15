@@ -1,15 +1,18 @@
 ﻿using System.Collections.Concurrent;
+using System.Data;
 using System.Net;
 using System.Net.WebSockets;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using SpaceCorpsServerShared;
 using SpaceCorpsServerShared.Players;
+using SpaceCorpsServerShared.Statistics;
 
 public class Server : IServer
 {
-    private readonly ConcurrentDictionary<Guid, Player> players = new();
+    private readonly ConcurrentDictionary<Guid, IPlayer> players = new();
     private readonly ConcurrentDictionary<Guid, WebSocket> sockets = new();
+    private IStatisticsServer statisticsServer;
     private readonly ILogger<Server> _logger;
     private int _port { get; }
 
@@ -65,7 +68,7 @@ public class Server : IServer
             }
         }
     }
-    public async Task HandleWebSocketConnectionAsync(Player player)
+    public async Task HandleWebSocketConnectionAsync(IPlayer player)
     {
         WebSocket webSocket = sockets[player.Id];
         byte[] buffer = new byte[1024 * 4];
@@ -101,7 +104,7 @@ public class Server : IServer
         }
     }
 
-    public IEnumerable<Player> GetPlayers()
+    public IEnumerable<IPlayer> GetPlayers()
     {
         return players.Values;
     }
@@ -120,5 +123,10 @@ public class Server : IServer
         players.Clear();
 
         _logger.LogInformation("Server stopped");
+    }
+
+    public void SetupStatisticsServer(IStatisticsServer _statisticsServer)
+    {
+        statisticsServer = _statisticsServer;
     }
 }

@@ -1,6 +1,6 @@
 using System.Net;
-using SpaceCorpsServerShared.Entity;
 using SpaceCorpsServerShared.Players;
+using SpaceCorpsServerShared.Statistics;
 
 namespace SpaceCorpsServerShared
 {
@@ -9,9 +9,10 @@ namespace SpaceCorpsServerShared
         public void Start();
         public void Start(string[] args);
         public Task ListenForConnectionsAsync(HttpListener httpListener);
-        public Task HandleWebSocketConnectionAsync(Player player);
+        public Task HandleWebSocketConnectionAsync(IPlayer player);
         public void Stop();
-        public IEnumerable<Player> GetPlayers();
+        public IEnumerable<IPlayer> GetPlayers();
+        public void SetupStatisticsServer(IStatisticsServer statisticsServer);
 
     }
 }
