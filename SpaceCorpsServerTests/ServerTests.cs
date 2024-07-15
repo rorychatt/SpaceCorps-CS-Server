@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SpaceCorpsServerShared;
 
-namespace SpaceCorpsServerTests;
+namespace SpaceCorpsServerTests.ServerTests;
 
 public class ServerTests
 {

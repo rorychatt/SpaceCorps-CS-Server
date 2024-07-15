@@ -2,7 +2,7 @@ using System.Numerics;
 using SpaceCorpsServerShared.Item;
 using SpaceCorpsServerShared.Players;
 
-namespace SpaceCorpsServerTests;
+namespace SpaceCorpsServerTests.EntityTests;
 
 public class EntityTests
 {
