@@ -90,7 +90,7 @@ public class ServerTests
         var loggerMock = new Mock<ILogger<Server>>();
         var server = new Server(loggerMock.Object, port);
 
-        _ = server.StartAsync([]);
+        server.Start([]);
         server.Stop();
 
         loggerMock.Verify(

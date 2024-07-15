@@ -23,16 +23,16 @@ public class Server : IServer
     {
         _logger = new LoggerFactory().CreateLogger<Server>();
     }
-    public async Task StartAsync(string[] args)
+    public void Start(string[] args)
     {
         HttpListener httpListener = new();
         httpListener.Prefixes.Add($"http://localhost:{_port}/");
         httpListener.Start();
         _logger.LogInformation("Server started at http://localhost:{Port}/", _port);
 
-        Task listenTask = ListenForConnectionsAsync(httpListener);
+        _ = ListenForConnectionsAsync(httpListener);
 
-        await listenTask;
+
     }
 
     public async Task ListenForConnectionsAsync(HttpListener httpListener)
