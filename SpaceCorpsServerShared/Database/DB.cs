@@ -10,7 +10,7 @@ public class DB : IDB
     public DB(string connectionString)
     {
         connection = new MySqlConnection(connectionString);
-        dbHandler = new DBHandler();
+        dbHandler = new DBHandler(connection);
     }
 
     public void OpenConnection()

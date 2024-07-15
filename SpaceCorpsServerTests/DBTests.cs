@@ -8,8 +8,6 @@ public class DBTests
     public void CanConnect_ToDB()
     {
         var db = new DB(connectionString);
-        var dbHandler = new DBHandler();
-        db.SetDBHandler(dbHandler);
 
         db.OpenConnection();
         db.CloseConnection();
@@ -17,5 +15,17 @@ public class DBTests
         Assert.True(true);
     }
 
-    
+    [Fact]
+    public void Gets_All_Tables()
+    {
+        var db = new DB(connectionString);
+
+        db.OpenConnection();
+        var tables = db.GetDBHandler().GetAllTables();
+        db.CloseConnection();
+
+        Assert.True(tables.Count > 0);
+    }
+
+
 }
