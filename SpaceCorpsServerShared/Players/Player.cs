@@ -10,6 +10,8 @@ namespace SpaceCorpsServerShared.Players
         public Vector3 Position { get; set; }
         private IInventory Inventory { get; } = new Inventory();
 
+        private IStats Stats { get; } = new Stats();
+
         public Player()
         {
             Id = Guid.NewGuid();
@@ -38,6 +40,11 @@ namespace SpaceCorpsServerShared.Players
         public IInventory GetInventory()
         {
             return Inventory;
+        }
+
+        public IStats GetStats()
+        {
+            return Stats;
         }
     }
 }

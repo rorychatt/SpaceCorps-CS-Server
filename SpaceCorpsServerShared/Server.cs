@@ -12,7 +12,7 @@ public class Server : IServer
 {
     private readonly ConcurrentDictionary<Guid, IPlayer> players = new();
     private readonly ConcurrentDictionary<Guid, WebSocket> sockets = new();
-    private IStatisticsServer statisticsServer;
+    private IStatisticsServer statisticsServer = new StatisticsServer();
     private readonly ILogger<Server> _logger;
     private int _port { get; }
 

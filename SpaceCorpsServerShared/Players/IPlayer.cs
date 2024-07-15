@@ -9,4 +9,5 @@ public interface IPlayer : IEntity
     public void RemoveItem(IItem item);
     public void ClearInventory();
     public IInventory GetInventory();
+    public IStats GetStats();
 }
