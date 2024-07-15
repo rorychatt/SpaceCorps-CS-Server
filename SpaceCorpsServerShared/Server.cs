@@ -9,8 +9,8 @@ using SpaceCorpsServerShared.Entity;
 
 public class Server : IServer
 {
-    private ConcurrentDictionary<Guid, Player> players = new ConcurrentDictionary<Guid, Player>();
-    private ConcurrentDictionary<Guid, WebSocket> sockets = new ConcurrentDictionary<Guid, WebSocket>();
+    private readonly ConcurrentDictionary<Guid, Player> players = new();
+    private readonly ConcurrentDictionary<Guid, WebSocket> sockets = new();
     private readonly ILogger<Server> _logger;
     public int _port { get; }
 
