@@ -6,6 +6,7 @@ namespace SpaceCorpsServerShared
 {
     public interface IServer
     {
+        public void Start();
         public void Start(string[] args);
         public Task ListenForConnectionsAsync(HttpListener httpListener);
         public Task HandleWebSocketConnectionAsync(Player player);

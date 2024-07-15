@@ -11,7 +11,7 @@ public class Server : IServer
     private readonly ConcurrentDictionary<Guid, Player> players = new();
     private readonly ConcurrentDictionary<Guid, WebSocket> sockets = new();
     private readonly ILogger<Server> _logger;
-    public int _port { get; }
+    private int _port { get; }
 
     public Server(ILogger<Server> logger, int port)
     {
@@ -22,6 +22,11 @@ public class Server : IServer
     public Server()
     {
         _logger = new LoggerFactory().CreateLogger<Server>();
+    }
+
+    public void Start()
+    {
+        Start([]);
     }
     public void Start(string[] args)
     {
