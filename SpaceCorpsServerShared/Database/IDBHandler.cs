@@ -1,9 +1,9 @@
 using System.Collections.Concurrent;
 using SpaceCorpsServerShared.Players;
 
-namespace SpaceCorpsServerShared.Statistics;
+namespace SpaceCorpsServerShared.Database;
 
-public interface IStatisticsServer
+public interface IDBHandler
 {
     public void StorePlayersStats(ConcurrentDictionary<Guid, IPlayer> players);
         
