@@ -129,4 +129,9 @@ public class Server : IServer
     {
         statisticsServer = _statisticsServer;
     }
+
+    public IStatisticsServer GetStatisticsServer()
+    {
+        return statisticsServer;
+    }
 }
