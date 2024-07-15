@@ -6,6 +6,10 @@ namespace SpaceCorpsServerTests;
 
 public class EntityTests
 {
+
+}
+public class PlayerTests
+{
     [Fact]
     public void TestPlayer_Id_ReturnsGuid()
     {
