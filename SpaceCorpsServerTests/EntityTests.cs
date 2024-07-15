@@ -1,6 +1,6 @@
 using System.Numerics;
-using SpaceCorpsServerShared.Entity;
 using SpaceCorpsServerShared.Item;
+using SpaceCorpsServerShared.Players;
 
 namespace SpaceCorpsServerTests;
 
@@ -35,7 +35,7 @@ public class EntityTests
         var player = new Player();
         var item = new ShipItem();
         player.AddItem(item);
-        Assert.Contains(item.ItemId, player.Inventory.Keys);
+        Assert.Contains(item.ItemId, player.GetInventory().GetContents().Keys);
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class EntityTests
         var item = new ShipItem();
         player.AddItem(item);
         player.RemoveItem(item);
-        Assert.DoesNotContain(item.ItemId, player.Inventory.Keys);
+        Assert.DoesNotContain(item.ItemId, player.GetInventory().GetContents().Keys);
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class EntityTests
         var player = new Player();
         var item = new ShipItem();
         player.RemoveItem(item);
-        Assert.DoesNotContain(item.ItemId, player.Inventory.Keys);
+        Assert.DoesNotContain(item.ItemId, player.GetInventory().GetContents().Keys);
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public class EntityTests
         player.AddItem(item);
         player.RemoveItem(item);
         player.RemoveItem(item);
-        Assert.DoesNotContain(item.ItemId, player.Inventory.Keys);
+        Assert.DoesNotContain(item.ItemId, player.GetInventory().GetContents().Keys);
     }
 
 }

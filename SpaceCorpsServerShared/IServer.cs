@@ -1,5 +1,6 @@
 using System.Net;
 using SpaceCorpsServerShared.Entity;
+using SpaceCorpsServerShared.Players;
 
 namespace SpaceCorpsServerShared
 {

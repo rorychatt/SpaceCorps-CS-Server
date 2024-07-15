@@ -1,11 +1,10 @@
 ﻿using System.Collections.Concurrent;
 using System.Net;
 using System.Net.WebSockets;
-using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using SpaceCorpsServerShared;
-using SpaceCorpsServerShared.Entity;
+using SpaceCorpsServerShared.Players;
 
 public class Server : IServer
 {
