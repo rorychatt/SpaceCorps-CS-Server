@@ -4,7 +4,8 @@ namespace SpaceCorpsServerTests.DBTests;
 
 public class DBTests
 {
-    static readonly string connectionString = "Server=rorycraft.com;Database=spacecorps;Uid=server;Pwd=popapenis123;"; [Fact]
+    static readonly string connectionString = "Server=rorycraft.com;Database=spacecorps;Uid=server;Pwd=popapenis123;";
+    [Fact]
     public void CanConnect_ToDB()
     {
         var db = new DB(connectionString);
@@ -21,10 +22,10 @@ public class DBTests
         var db = new DB(connectionString);
 
         db.OpenConnection();
-        var tables = db.GetDBHandler().GetAllTables();
+        var tableSchema = db.GetDBHandler().GetSchema();
         db.CloseConnection();
 
-        Assert.True(tables.Count > 0);
+        Assert.True(tableSchema.Count > 0);
     }
 
 
