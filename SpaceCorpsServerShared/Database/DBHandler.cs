@@ -54,6 +54,8 @@ public class DBHandler(MySqlConnection connection, ILogger<DBHandler> logger) : 
 
     }
 
+    // This method should not be used outside of this class.
+    // TODO: Isolate this method later.
     public async Task ExecuteSqlCommandAsync(string sqlCommand)
     {
         try
