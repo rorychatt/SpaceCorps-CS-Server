@@ -1,16 +1,14 @@
 using System.Collections.Concurrent;
+using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using SpaceCorpsServerShared.Players;
 
 namespace SpaceCorpsServerShared.Database;
-public class DBHandler : IDBHandler
+public class DBHandler(MySqlConnection connection, ILogger<DBHandler> logger) : IDBHandler
 {
-    MySqlConnection connection = new();
+    private MySqlConnection connection = connection;
+    private ILogger<DBHandler> logger = logger;
 
-    public DBHandler(MySqlConnection connection)
-    {
-        this.connection = connection;
-    }
     public void CreateMissingTables()
     {
         throw new NotImplementedException();
@@ -54,6 +52,20 @@ public class DBHandler : IDBHandler
 
         return tables;
 
+    }
+
+    public async Task ExecuteSqlCommandAsync(string sqlCommand)
+    {
+        try
+        {
+            using var command = new MySqlCommand(sqlCommand, connection);
+            await command.ExecuteNonQueryAsync();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occurred while executing the SQL command: {SqlCommand}", sqlCommand);
+            throw;
+        }
     }
 
     public void SetMySQLConnection(MySqlConnection connection)

@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 
 namespace SpaceCorpsServerShared.Database;
@@ -6,11 +7,13 @@ public class DB : IDB
 {
     private MySqlConnection connection;
     private IDBHandler dbHandler;
+    private readonly ILogger<DBHandler> logger;
 
-    public DB(string connectionString)
+    public DB(string connectionString, ILogger<DBHandler> logger)
     {
+        this.logger = logger;
         connection = new MySqlConnection(connectionString);
-        dbHandler = new DBHandler(connection);
+        dbHandler = new DBHandler(connection, logger);
     }
 
     public void OpenConnection()
@@ -21,7 +24,7 @@ public class DB : IDB
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Cannot open connection to database. Error: " + ex.Message);
+            logger.LogInformation("Cannot open connection to database. Error: {Message}", ex.Message);
         }
     }
 
