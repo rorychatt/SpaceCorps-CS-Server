@@ -1,6 +1,7 @@
 namespace SpaceCorpsServerShared.Statistics;
 
-public interface IRewardable
+public interface IRewardable : IReward
 {
-    public IReward GetAsReward(Guid playerId);
+    public Guid PlayerId { get; init; }
+
 }

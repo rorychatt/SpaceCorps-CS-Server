@@ -1,6 +1,6 @@
 namespace SpaceCorpsServerShared.Statistics;
 
-public class ItemReward : IReward
+public class ItemReward : IRewardable
 {
     public Guid PlayerId { get; init; }
     public int ItemId { get; init; }
@@ -8,5 +8,10 @@ public class ItemReward : IReward
     {
         PlayerId = playerId;
         ItemId = itemId;
+    }
+
+    public IReward GetAsReward(Guid playerId)
+    {
+        return new ItemReward(playerId, ItemId);
     }
 }

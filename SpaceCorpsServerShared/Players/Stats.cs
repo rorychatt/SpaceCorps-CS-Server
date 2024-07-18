@@ -2,7 +2,7 @@ using SpaceCorpsServerShared.Statistics;
 
 namespace SpaceCorpsServerShared.Players;
 
-public class Stats : IStats, IRewardable
+public class Stats : IStats
 {
     private int Credits;
     private int Thulium;

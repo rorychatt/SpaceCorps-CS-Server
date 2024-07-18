@@ -5,7 +5,8 @@ namespace SpaceCorpsServerShared.Item;
 
 public class ShipItem : IItem, IRewardable
 {
-    public int ItemId {get; init;}
+    public int ItemId { get; init; }
+    public Guid PlayerId { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
 
     public ShipItem()
     {
