@@ -7,42 +7,34 @@ namespace SpaceCorpsServerShared.Statistics;
 public class RewardServer : IRewardServer
 {
     public ConcurrentDictionary<Guid, ConcurrentQueue<IRewardable>> Rewards => new();
-    public Task CreateReward(Guid playerId, IRewardable rewardable)
+    public void CreateReward(Guid playerId, IRewardable rewardable)
     {
-        return Task.Run(() =>
+        Rewards.AddOrUpdate(playerId, new ConcurrentQueue<IRewardable>(), (key, value) =>
         {
-            Rewards.AddOrUpdate(playerId, new ConcurrentQueue<IRewardable>(), (key, value) =>
-            {
-                value.Enqueue(rewardable);
-                return value;
-            });
+            value.Enqueue(rewardable);
+            return value;
         });
     }
 
-    public Task<ConcurrentQueue<IRewardable>> GetRewardsForUser(Guid playerId)
+    public ConcurrentQueue<IRewardable> GetRewardsForUser(Guid playerId)
     {
-        return Task.Run(() =>
+        if (Rewards.TryGetValue(playerId, out var rewards))
         {
-            if (Rewards.TryGetValue(playerId, out var rewards))
-            {
-                return rewards;
-            }
-            throw new ArgumentException("No rewards for user");
-        });
+            return rewards;
+        }
+        throw new ArgumentException("No rewards for user");
     }
 
-    public Task HandleRewardsForUser(Guid playerId)
+    public IRewardable HandleRewardsForUser(Guid playerId)
     {
-        return Task.Run(() =>
+        if (Rewards.TryGetValue(playerId, out var rewards))
         {
-            if (Rewards.TryGetValue(playerId, out var rewards))
+            if (rewards.TryDequeue(out var reward))
             {
-                if (rewards.TryDequeue(out var reward))
-                {
-                    return reward;
-                }
+                return reward;
             }
-            throw new ArgumentException("No rewards for user");
-        });
+        }
+        throw new ArgumentException("No rewards for user");
+
     }
 }
