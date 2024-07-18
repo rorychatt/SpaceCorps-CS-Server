@@ -12,6 +12,7 @@ namespace SpaceCorpsServerShared
         public Task HandleWebSocketConnectionAsync(IPlayer player);
         public void Stop();
         public IEnumerable<IPlayer> GetPlayers();
+        public IPlayer GetPlayer(Guid playerId);
         public void SetupStatisticsServer(IStatisticsServer statisticsServer);
 
     }

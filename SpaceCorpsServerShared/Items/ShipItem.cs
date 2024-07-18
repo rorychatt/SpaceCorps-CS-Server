@@ -1,7 +1,9 @@
 
+using SpaceCorpsServerShared.Statistics;
+
 namespace SpaceCorpsServerShared.Item;
 
-public class ShipItem : IItem
+public class ShipItem : IItem, IRewardable
 {
     public int ItemId {get; init;}
 
@@ -13,5 +15,10 @@ public class ShipItem : IItem
     private int _getItemIdFromDB()
     {
         return 1;
+    }
+
+    public IReward GetAsReward(Guid playerId)
+    {
+        return new ItemReward(playerId, ItemId);
     }
 }

@@ -1,6 +1,8 @@
+using SpaceCorpsServerShared.Statistics;
+
 namespace SpaceCorpsServerShared.Players;
 
-public class Stats : IStats
+public class Stats : IStats, IRewardable
 {
     private int Credits;
     private int Thulium;
@@ -34,6 +36,11 @@ public class Stats : IStats
     public void AddThulium(int thulium)
     {
         Thulium += thulium;
+    }
+
+    public IReward GetAsReward(Guid playerId)
+    {
+        return new StatsReward(playerId, this);
     }
 
     public int GetCredits()

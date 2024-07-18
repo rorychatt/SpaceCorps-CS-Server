@@ -133,4 +133,9 @@ public class Server : IServer
     {
         return statisticsServer;
     }
+
+    public IPlayer GetPlayer(Guid playerId)
+    {
+        throw new NotImplementedException();
+    }
 }
