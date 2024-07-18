@@ -22,7 +22,7 @@ public class DBTests
     }
 
     [Fact]
-    public void Gets_All_Tables()
+    public void Gets_All_Tables_Remote()
     {
         var db = new DB(connectionString, logger);
 

@@ -4,8 +4,33 @@ using SpaceCorpsServerShared.Players;
 namespace SpaceCorpsServerShared.Statistics;
 public class StatisticsServer : IStatisticsServer
 {
-    public void StorePlayersStats(ConcurrentDictionary<Guid, IPlayer> players)
+    public Task DeletePlayerStats(Guid playerId)
     {
-        
+        throw new NotImplementedException();
+    }
+
+    public Task<ConcurrentDictionary<Guid, IPlayer>> LoadAllPlayersStats()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IPlayer> LoadPlayerStats(Guid playerId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task SaveAllPlayersStats(ConcurrentDictionary<Guid, IPlayer> players)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task SavePlayerStats(IPlayer player)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task UpdatePlayerStats(IPlayer player)
+    {
+        throw new NotImplementedException();
     }
 }

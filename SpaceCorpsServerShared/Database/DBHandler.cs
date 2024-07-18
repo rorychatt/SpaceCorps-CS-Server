@@ -8,7 +8,7 @@ public class DBHandler(MySqlConnection connection, ILogger<DBHandler> logger) : 
 {
     private MySqlConnection connection = connection;
     private ILogger<DBHandler> logger = logger;
-
+    
     public void CreateMissingTables()
     {
         throw new NotImplementedException();
@@ -74,9 +74,5 @@ public class DBHandler(MySqlConnection connection, ILogger<DBHandler> logger) : 
     {
         this.connection = connection;
     }
-
-    public void StorePlayersStats(ConcurrentDictionary<Guid, IPlayer> players)
-    {
-        throw new NotImplementedException();
-    }
+    
 }
