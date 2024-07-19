@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Security;
 using SpaceCorpsServerShared.Item;
 using SpaceCorpsServerShared.Players;
@@ -9,13 +10,27 @@ public class RewardServer : IRewardServer
     public ConcurrentDictionary<Guid, ConcurrentQueue<IRewardable>> Rewards => new();
     public void CreateReward(Guid playerId, IRewardable rewardable)
     {
-        Rewards.AddOrUpdate(playerId, new ConcurrentQueue<IRewardable>(), (key, value) =>
-        {
-            value.Enqueue(rewardable);
-            return value;
-        });
-    }
+        Debug.WriteLine($"Attempting to add/update reward for player ID: {playerId}");
 
+        Rewards.AddOrUpdate(playerId,
+            // Add value factory
+            (id) =>
+            {
+                var newQueue = new ConcurrentQueue<IRewardable>();
+                newQueue.Enqueue(rewardable);
+                Debug.WriteLine($"Created new queue for player ID: {playerId}");
+                return newQueue;
+            },
+            // Update value factory
+            (id, queue) =>
+            {
+                queue.Enqueue(rewardable);
+                Debug.WriteLine($"Updated queue for player ID: {playerId}");
+                return queue;
+            });
+
+        Debug.WriteLine($"Operation complete for player ID: {playerId}. Queue count: {Rewards[playerId].Count}");
+    }
     public ConcurrentQueue<IRewardable> GetRewardsForUser(Guid playerId)
     {
         if (Rewards.TryGetValue(playerId, out var rewards))
