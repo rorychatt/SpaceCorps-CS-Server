@@ -1,16 +1,27 @@
 namespace SpaceCorpsServerShared.Statistics;
 public class RewardServer : IRewardServer
 {
-    public Dictionary<Guid, List<IRewardable>> Rewards => [];
+    public Dictionary<Guid, List<IRewardable>> Rewards;
+
+    public RewardServer()
+    {
+        Rewards = [];
+    }
+
     public void CreateReward(Guid playerId, IRewardable rewardable)
     {
         if (!Rewards.TryGetValue(playerId, out List<IRewardable>? value))
         {
             value = [];
-            Rewards[playerId] = value;
+            Rewards.Add(playerId, value);
         }
 
         value.Add(rewardable);
+    }
+
+    public Dictionary<Guid, List<IRewardable>> GetRewards()
+    {
+        return Rewards;
     }
     public List<IRewardable> GetRewardsForUser(Guid playerId)
     {
