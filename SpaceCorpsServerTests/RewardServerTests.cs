@@ -26,7 +26,7 @@ public class RewardServerTests
     }
 
     [Fact]
-    public async void Adds_ItemReward_To_RewardServer()
+    public void Adds_ItemReward_To_RewardServer()
     {
         var playerId = Guid.NewGuid();
         var itemId = 1;

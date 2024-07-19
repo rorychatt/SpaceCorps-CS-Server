@@ -1,50 +1,36 @@
-using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Security;
-using SpaceCorpsServerShared.Item;
-using SpaceCorpsServerShared.Players;
-
 namespace SpaceCorpsServerShared.Statistics;
 public class RewardServer : IRewardServer
 {
-    public Dictionary<Guid, Queue<IRewardable>> Rewards => new();
+    public Dictionary<Guid, List<IRewardable>> Rewards => [];
     public void CreateReward(Guid playerId, IRewardable rewardable)
     {
-        if (Rewards.TryGetValue(playerId, out var rewards))
+        if (!Rewards.TryGetValue(playerId, out List<IRewardable>? value))
         {
-            rewards.Enqueue(rewardable);
+            value = [];
+            Rewards[playerId] = value;
         }
-        else
-        {
-            var queue = new Queue<IRewardable>();
-            queue.Enqueue(rewardable);
-            Debug.WriteLine("Before adding: " + Rewards.Count);
-            if (Rewards.TryAdd(playerId, queue))
-            {
-                Debug.WriteLine("Added reward for user");
-                Debug.WriteLine("After adding: " + Rewards.Count);
-            }
-        }
+
+        value.Add(rewardable);
     }
-    public Queue<IRewardable> GetRewardsForUser(Guid playerId)
+    public List<IRewardable> GetRewardsForUser(Guid playerId)
     {
-        if (Rewards.TryGetValue(playerId, out var rewards))
+        if (!Rewards.TryGetValue(playerId, out List<IRewardable>? value))
         {
-            return rewards;
+            return [];
         }
-        throw new ArgumentException("No rewards for user");
+
+        return value;
     }
 
-    public IRewardable HandleRewardsForUser(Guid playerId)
+    public IRewardable? HandleRewardsForUser(Guid playerId)
     {
-        if (Rewards.TryGetValue(playerId, out var rewards))
+        if (!Rewards.TryGetValue(playerId, out List<IRewardable>? value))
         {
-            if (rewards.TryDequeue(out var reward))
-            {
-                return reward;
-            }
+            return null;
         }
-        throw new ArgumentException("No rewards for user");
 
+        var reward = value[0];
+        value.RemoveAt(0);
+        return reward;
     }
 }
