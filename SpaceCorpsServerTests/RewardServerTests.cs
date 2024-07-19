@@ -32,7 +32,7 @@ public class RewardServerTests
         var itemId = 1;
         var reward = new ItemReward(playerId, itemId);
         var rewardsServer = new RewardServer();
-        await rewardsServer.CreateReward(playerId, reward);
+        await rewardsServer.CreateRewardAsync(playerId, reward);
 
         var rewardsFromServer = rewardsServer.GetRewardsForUser(playerId);
         Assert.Single(rewardsFromServer);
