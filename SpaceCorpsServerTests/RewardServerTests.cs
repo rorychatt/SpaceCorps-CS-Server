@@ -37,4 +37,18 @@ public class RewardServerTests
         var rewardsFromServer = rewardsServer.GetRewardsForUser(playerId);
         Assert.Single(rewardsFromServer);
     }
+
+    [Fact]
+    public async void Add_StatsReward_To_RewardServer()
+    {
+        var playerId = Guid.NewGuid();
+        var stats = new Stats();
+        var reward = new StatsReward(playerId, stats);
+        var rewardsServer = new RewardServer();
+        await rewardsServer.CreateRewardAsync(playerId, reward);
+
+        var rewardsFromServer = rewardsServer.GetRewardsForUser(playerId);
+        Assert.Single(rewardsFromServer);
+    }
+    
 }
