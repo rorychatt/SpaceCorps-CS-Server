@@ -37,12 +37,7 @@ public class Stats : IStats
     {
         Thulium += thulium;
     }
-
-    public IReward GetAsReward(Guid playerId)
-    {
-        return new StatsReward(playerId, this);
-    }
-
+    
     public int GetCredits()
     {
         return Credits;

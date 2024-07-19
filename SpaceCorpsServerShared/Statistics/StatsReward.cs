@@ -2,7 +2,7 @@ using System.Reflection.Metadata.Ecma335;
 using SpaceCorpsServerShared.Players;
 
 namespace SpaceCorpsServerShared.Statistics;
-public class StatsReward : IRewardable
+public class StatsReward : IStatsReward
 {
     public Guid PlayerId { get; init; }
     public Stats Statistics { get; init; }
@@ -14,6 +14,6 @@ public class StatsReward : IRewardable
 
     public IReward GetAsReward(Guid playerId)
     {
-        return new StatsReward(playerId, Statistics);
+        return new StatsReward(PlayerId, Statistics);
     }
 }
