@@ -19,20 +19,20 @@ public class ServerTests
         Assert.True(true);
     }
 
-    // [Fact]
-    // public void TestServer_Connects()
-    // {
-    //     var port = 1001;
-    //     var loggerMock = new Mock<ILogger<Server>>();
-    //     var server = new Server(loggerMock.Object, port);
+    [Fact]
+    public async void TestServer_Connects()
+    {
+        var port = 2001;
+        var loggerMock = new Mock<ILogger<Server>>();
+        var server = new Server(loggerMock.Object, port);
 
-    //     _ = server.StartAsync([]);
-    //     var client = new ClientWebSocket();
-    //     client.ConnectAsync(new Uri($"ws://localhost:{port}"), CancellationToken.None);
-    //     Assert.Equal(WebSocketState.Open, client.State);
+        server.Start([]);
+        var client = new ClientWebSocket();
+        await client.ConnectAsync(new Uri($"ws://localhost:{port}"), CancellationToken.None);
+        Assert.Equal(WebSocketState.Open, client.State);
 
-    //     server.Stop();
-    // }
+        server.Stop();
+    }
 
     // [Fact]
     // public void TestServer_CreatesPlayer_OnJoin()
