@@ -1,47 +1,44 @@
+using System.Collections.Concurrent;
+
 namespace SpaceCorpsServerShared.Statistics;
 public class RewardServer : IRewardServer
 {
-    public Dictionary<Guid, List<IRewardable>> Rewards;
+    public ConcurrentDictionary<Guid, ConcurrentQueue<IRewardable>> Rewards;
 
     public RewardServer()
     {
         Rewards = [];
     }
-
-    public void CreateReward(Guid playerId, IRewardable rewardable)
-    {
-        if (!Rewards.TryGetValue(playerId, out List<IRewardable>? value))
-        {
-            value = [];
-            Rewards.Add(playerId, value);
-        }
-
-        value.Add(rewardable);
-    }
-
-    public Dictionary<Guid, List<IRewardable>> GetRewards()
+    public ConcurrentDictionary<Guid, ConcurrentQueue<IRewardable>> GetRewards()
     {
         return Rewards;
     }
-    public List<IRewardable> GetRewardsForUser(Guid playerId)
+
+    public void CreateReward(Guid playerId, IRewardable rewardable)
     {
-        if (!Rewards.TryGetValue(playerId, out List<IRewardable>? value))
+        if (!Rewards.TryGetValue(playerId, out ConcurrentQueue<IRewardable>? value))
         {
-            return [];
+            value = new ConcurrentQueue<IRewardable>();
+            Rewards[playerId] = value;
         }
 
-        return value;
+        value.Enqueue(rewardable);
+    }
+    public ConcurrentQueue<IRewardable> GetRewardsForUser(Guid playerId)
+    {
+        return Rewards[playerId];
     }
 
     public IRewardable? HandleRewardsForUser(Guid playerId)
     {
-        if (!Rewards.TryGetValue(playerId, out List<IRewardable>? value))
+        if (!Rewards.TryGetValue(playerId, out ConcurrentQueue<IRewardable>? value))
         {
             return null;
         }
-
-        var reward = value[0];
-        value.RemoveAt(0);
-        return reward;
+        if (value.TryDequeue(out var reward))
+        {
+            return reward;
+        }
+        return null;
     }
 }
