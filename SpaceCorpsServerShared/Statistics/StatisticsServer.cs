@@ -29,7 +29,7 @@ public class StatisticsServer : IStatisticsServer
         throw new NotImplementedException();
     }
 
-    public Task UpdatePlayerStats(IPlayer player)
+    public Task UpdatePlayerStats(IPlayer player, IStats stats)
     {
         throw new NotImplementedException();
     }
