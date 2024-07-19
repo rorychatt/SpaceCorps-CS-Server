@@ -14,7 +14,7 @@ public class Server : IServer
     private IStatisticsServer statisticsServer = new StatisticsServer();
     private readonly ILogger<Server> _logger;
     private int _port { get; }
-
+    public IRewardServer RewardServer { get; private set; } = new RewardServer();
     public Server(ILogger<Server> logger, int port)
     {
         _logger = logger;
@@ -137,5 +137,10 @@ public class Server : IServer
     public IPlayer GetPlayer(Guid playerId)
     {
         throw new NotImplementedException();
+    }
+
+    public void SetRewardServer(IRewardServer rewardServer)
+    {
+        RewardServer = rewardServer;
     }
 }
