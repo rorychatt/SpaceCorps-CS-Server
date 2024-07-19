@@ -8,7 +8,7 @@ namespace SpaceCorpsServerShared.Statistics;
 public class RewardServer : IRewardServer
 {
     public ConcurrentDictionary<Guid, ConcurrentQueue<IRewardable>> Rewards => new();
-    public async Task CreateReward(Guid playerId, IRewardable rewardable)
+    public void CreateReward(Guid playerId, IRewardable rewardable)
     {
         if (Rewards.TryGetValue(playerId, out var rewards))
         {
@@ -25,9 +25,6 @@ public class RewardServer : IRewardServer
                 Debug.WriteLine("After adding: " + Rewards.Count);
             }
         }
-
-        // Simulate async work if necessary
-        await Task.CompletedTask;
     }
     public ConcurrentQueue<IRewardable> GetRewardsForUser(Guid playerId)
     {
