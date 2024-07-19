@@ -15,6 +15,6 @@ namespace SpaceCorpsServerShared
         public IPlayer GetPlayer(Guid playerId);
         public void SetupStatisticsServer(IStatisticsServer statisticsServer);
         public void SetRewardServer(IRewardServer rewardServer);
-
+        public Task ProcessRewardTickAsync();
     }
 }

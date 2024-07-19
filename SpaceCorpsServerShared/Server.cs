@@ -143,4 +143,30 @@ public class Server : IServer
     {
         RewardServer = rewardServer;
     }
+
+    public async Task ProcessRewardTickAsync()
+    {
+        var rewardTasks = new List<Task>();
+        foreach (IPlayer player in players.Values)
+        {
+            async Task HandlePlayerAsync(IPlayer p)
+            {
+                try
+                {
+                    var rewardResult = await RewardServer.HandleRewardsForUserAsync(p.Id);
+                    if (rewardResult != null)
+                    {
+                        await statisticsServer.UpdatePlayerFromReward(p, rewardResult);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error processing rewards for player {p.Id}: {ex.Message}");
+                }
+            }
+            rewardTasks.Add(HandlePlayerAsync(player));
+        }
+        await Task.WhenAll(rewardTasks);
+    }
+
 }

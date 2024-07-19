@@ -9,7 +9,7 @@ public interface IStatisticsServer
     public Task SavePlayerStats(IPlayer player);
     public Task<ConcurrentDictionary<Guid, IPlayer>> LoadAllPlayersStats();
     public Task<IPlayer>LoadPlayerStats(Guid playerId);
-    public Task UpdatePlayerStats(IPlayer player, IStats stats);
+    public Task UpdatePlayerFromReward(IPlayer player, IRewardable rewardable);
     public Task DeletePlayerStats(Guid playerId);
         
 }
