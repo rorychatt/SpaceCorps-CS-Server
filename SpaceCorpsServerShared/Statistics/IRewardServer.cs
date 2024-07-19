@@ -5,7 +5,7 @@ namespace SpaceCorpsServerShared.Statistics;
 public interface IRewardServer
 {
     public ConcurrentDictionary<Guid, ConcurrentQueue<IRewardable>> GetRewards();
-    Task CreateReward(Guid playerId, IRewardable rewardable);
-    Task<IRewardable?> HandleRewardsForUser(Guid playerId);
+    Task CreateRewardAsync(Guid playerId, IRewardable rewardable);
+    Task<IRewardable?> HandleRewardsForUserAsync(Guid playerId);
     ConcurrentQueue<IRewardable> GetRewardsForUser(Guid playerId);
 }

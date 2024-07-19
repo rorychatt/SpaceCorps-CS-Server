@@ -14,7 +14,7 @@ public class RewardServer : IRewardServer
         return Rewards;
     }
 
-    public async Task CreateReward(Guid playerId, IRewardable rewardable)
+    public async Task CreateRewardAsync(Guid playerId, IRewardable rewardable)
     {
         await Task.Run(() =>
         {
@@ -37,7 +37,7 @@ public class RewardServer : IRewardServer
         return Rewards[playerId];
     }
 
-    public async Task<IRewardable?> HandleRewardsForUser(Guid playerId)
+    public async Task<IRewardable?> HandleRewardsForUserAsync(Guid playerId)
     {
         return await Task.Run(() =>
         {
