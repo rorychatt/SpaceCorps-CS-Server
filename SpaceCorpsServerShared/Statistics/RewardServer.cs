@@ -7,7 +7,7 @@ using SpaceCorpsServerShared.Players;
 namespace SpaceCorpsServerShared.Statistics;
 public class RewardServer : IRewardServer
 {
-    public ConcurrentDictionary<Guid, ConcurrentQueue<IRewardable>> Rewards => new();
+    public Dictionary<Guid, Queue<IRewardable>> Rewards => new();
     public void CreateReward(Guid playerId, IRewardable rewardable)
     {
         if (Rewards.TryGetValue(playerId, out var rewards))
@@ -16,7 +16,7 @@ public class RewardServer : IRewardServer
         }
         else
         {
-            var queue = new ConcurrentQueue<IRewardable>();
+            var queue = new Queue<IRewardable>();
             queue.Enqueue(rewardable);
             Debug.WriteLine("Before adding: " + Rewards.Count);
             if (Rewards.TryAdd(playerId, queue))
@@ -26,7 +26,7 @@ public class RewardServer : IRewardServer
             }
         }
     }
-    public ConcurrentQueue<IRewardable> GetRewardsForUser(Guid playerId)
+    public Queue<IRewardable> GetRewardsForUser(Guid playerId)
     {
         if (Rewards.TryGetValue(playerId, out var rewards))
         {
