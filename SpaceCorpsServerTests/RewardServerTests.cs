@@ -26,13 +26,13 @@ public class RewardServerTests
     }
 
     [Fact]
-    public void Adds_ItemReward_To_RewardServer()
+    public async void Adds_ItemReward_To_RewardServer()
     {
         var playerId = Guid.NewGuid();
         var itemId = 1;
         var reward = new ItemReward(playerId, itemId);
         var rewardsServer = new RewardServer();
-        rewardsServer.CreateReward(playerId, reward);
+        await rewardsServer.CreateReward(playerId, reward);
 
         var rewardsFromServer = rewardsServer.GetRewardsForUser(playerId);
         Assert.Single(rewardsFromServer);

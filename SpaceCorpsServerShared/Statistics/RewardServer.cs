@@ -14,31 +14,41 @@ public class RewardServer : IRewardServer
         return Rewards;
     }
 
-    public void CreateReward(Guid playerId, IRewardable rewardable)
+    public async Task CreateReward(Guid playerId, IRewardable rewardable)
     {
-        if (!Rewards.TryGetValue(playerId, out ConcurrentQueue<IRewardable>? value))
+        await Task.Run(() =>
         {
-            value = new ConcurrentQueue<IRewardable>();
-            Rewards[playerId] = value;
-        }
-
-        value.Enqueue(rewardable);
+            if (!Rewards.TryGetValue(playerId, out ConcurrentQueue<IRewardable>? value))
+            {
+                value = new ConcurrentQueue<IRewardable>();
+                lock (Rewards)
+                {
+                    if (!Rewards.ContainsKey(playerId))
+                    {
+                        Rewards[playerId] = value;
+                    }
+                }
+            }
+            value.Enqueue(rewardable);
+        });
     }
     public ConcurrentQueue<IRewardable> GetRewardsForUser(Guid playerId)
     {
         return Rewards[playerId];
     }
 
-    public IRewardable? HandleRewardsForUser(Guid playerId)
+    public async Task<IRewardable?> HandleRewardsForUser(Guid playerId)
     {
-        if (!Rewards.TryGetValue(playerId, out ConcurrentQueue<IRewardable>? value))
+        return await Task.Run(() =>
         {
+            if (Rewards.TryGetValue(playerId, out ConcurrentQueue<IRewardable>? value))
+            {
+                if (value.TryDequeue(out IRewardable? reward))
+                {
+                    return reward;
+                }
+            }
             return null;
-        }
-        if (value.TryDequeue(out var reward))
-        {
-            return reward;
-        }
-        return null;
+        });
     }
 }
