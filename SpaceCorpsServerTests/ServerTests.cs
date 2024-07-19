@@ -52,49 +52,4 @@ public class ServerTests
         server.Stop();
     }
 
-    // [Fact]
-    // public void TestServer_Prints_ServerStarted_Message_WithCorrect_Port()
-    // {
-    //     var port = 1003;
-    //     var loggerMock = new Mock<ILogger<Server>>();
-    //     var server = new Server(loggerMock.Object, port);
-
-    //     _ = server.StartAsync([]);
-
-    //     loggerMock.Verify(
-    //         x => x.Log(
-    //             LogLevel.Information,
-    //             It.IsAny<EventId>(),
-    //             It.Is<It.IsAnyType>((v, t) => v.ToString() == $"Server started at http://localhost:{port}/"),
-    //             It.IsAny<Exception>(),
-    //             (Func<It.IsAnyType, Exception?, string>)It.IsAny<object>()
-    //         ),
-    //         Times.Once
-    //     );
-
-    //     server.Stop();
-    // }
-
-    // [Fact]
-    // public void TestServer_Prints_ServerStopped_Message()
-    // {
-    //     var port = 1004;
-    //     var loggerMock = new Mock<ILogger<Server>>();
-    //     var server = new Server(loggerMock.Object, port);
-
-    //     server.Start([]);
-    //     server.Stop();
-
-    //     loggerMock.Verify(
-    //         x => x.Log(
-    //             LogLevel.Information,
-    //             It.IsAny<EventId>(),
-    //             It.Is<It.IsAnyType>((v, t) => v.ToString() == "Server stopped"),
-    //             It.IsAny<Exception>(),
-    //             (Func<It.IsAnyType, Exception?, string>)It.IsAny<object>()
-    //         ),
-    //         Times.Once
-    //     );
-    // }
-
 }
