@@ -13,12 +13,12 @@ public class Server : IServer
     private readonly ConcurrentDictionary<Guid, WebSocket> sockets = new();
     private IStatisticsServer statisticsServer = new StatisticsServer();
     private readonly ILogger<Server> _logger;
-    private int _port { get; }
+    private int Port { get; }
     public IRewardServer RewardServer { get; private set; } = new RewardServer();
     public Server(ILogger<Server> logger, int port)
     {
         _logger = logger;
-        _port = port;
+        Port = port;
     }
 
     public Server()
@@ -33,9 +33,9 @@ public class Server : IServer
     public void Start(string[] args)
     {
         HttpListener httpListener = new();
-        httpListener.Prefixes.Add($"http://localhost:{_port}/");
+        httpListener.Prefixes.Add($"http://localhost:{Port}/");
         httpListener.Start();
-        _logger.LogInformation("Server started at http://localhost:{Port}/", _port);
+        _logger.LogInformation("Server started at http://localhost:{Port}/", Port);
 
         _ = ListenForConnectionsAsync(httpListener);
 
@@ -133,9 +133,9 @@ public class Server : IServer
         return statisticsServer;
     }
 
-    public IPlayer GetPlayer(Guid playerId)
+    public IPlayer GetPlayerByID(Guid playerId)
     {
-        throw new NotImplementedException();
+        return players[playerId];
     }
 
     public void SetRewardServer(IRewardServer rewardServer)

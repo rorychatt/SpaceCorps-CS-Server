@@ -71,7 +71,12 @@ public class ServerTests
 
         await server.IssueRewardAsync(player.Id, new ItemReward(player.Id, 1));
 
-        server.RewardServer.GetRewardsForUser(player.Id).Count.Should().Be(1);
+
+        var receivedReward = server.RewardServer.GetRewardsForUser(player.Id).First();
+        receivedReward.Should().BeOfType<ItemReward>();
+
+        server.Stop();
+
     }
 
     [Fact]
@@ -95,7 +100,9 @@ public class ServerTests
 
         await server.ProcessRewardTickAsync();
 
-        server.GetPlayer(player.Id).GetStats().GetThulium().Should().Be(10001);
+        server.GetPlayerByID(player.Id).GetStats().GetThulium().Should().Be(10001);
+
+        server.Stop();
     }
 
 
