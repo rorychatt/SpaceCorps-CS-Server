@@ -4,34 +4,34 @@ using SpaceCorpsServerShared.Players;
 namespace SpaceCorpsServerShared.Statistics;
 public class StatisticsServer : IStatisticsServer
 {
-    public Task DeletePlayerStats(Guid playerId)
+    public Task DeletePlayerStatsAsync(Guid playerId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<ConcurrentDictionary<Guid, IPlayer>> LoadAllPlayersStats()
+    public Task<ConcurrentDictionary<Guid, IPlayer>> LoadAllPlayersStatsAsync()
     {
         throw new NotImplementedException();
     }
 
-    public Task<IPlayer> LoadPlayerStats(Guid playerId)
+    public Task<IPlayer> LoadPlayerStatsAsync(Guid playerId)
     {
         throw new NotImplementedException();
     }
 
-    public Task SaveAllPlayersStats(ConcurrentDictionary<Guid, IPlayer> players)
+    public Task SaveAllPlayersStatsAsync(ConcurrentDictionary<Guid, IPlayer> players)
     {
         throw new NotImplementedException();
     }
 
-    public Task SavePlayerStats(IPlayer player)
+    public Task SavePlayerStatsAsync(IPlayer player)
     {
         throw new NotImplementedException();
     }
 
-    public Task UpdatePlayerFromReward(IPlayer player, IRewardable rewardable)
+    public Task UpdatePlayerFromRewardAsync(IPlayer player, IRewardable rewardable)
     {
-        player.UpdateStats(rewardable);
+        return Task.Run(() => player.UpdateStats(rewardable));
     }
 
 }

@@ -155,7 +155,7 @@ public class Server : IServer
                     var rewardResult = await RewardServer.HandleRewardsForUserAsync(p.Id);
                     if (rewardResult != null)
                     {
-                        await statisticsServer.UpdatePlayerFromReward(p, rewardResult);
+                        await statisticsServer.UpdatePlayerFromRewardAsync(p, rewardResult);
                     }
                 }
                 catch (Exception ex)

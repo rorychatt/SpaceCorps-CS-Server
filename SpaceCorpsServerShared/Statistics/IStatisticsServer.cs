@@ -5,11 +5,11 @@ namespace SpaceCorpsServerShared.Statistics;
 
 public interface IStatisticsServer
 {
-    public Task SaveAllPlayersStats(ConcurrentDictionary<Guid, IPlayer> players);
-    public Task SavePlayerStats(IPlayer player);
-    public Task<ConcurrentDictionary<Guid, IPlayer>> LoadAllPlayersStats();
-    public Task<IPlayer>LoadPlayerStats(Guid playerId);
-    public Task UpdatePlayerFromReward(IPlayer player, IRewardable rewardable);
-    public Task DeletePlayerStats(Guid playerId);
+    public Task SaveAllPlayersStatsAsync(ConcurrentDictionary<Guid, IPlayer> players);
+    public Task SavePlayerStatsAsync(IPlayer player);
+    public Task<ConcurrentDictionary<Guid, IPlayer>> LoadAllPlayersStatsAsync();
+    public Task<IPlayer>LoadPlayerStatsAsync(Guid playerId);
+    public Task UpdatePlayerFromRewardAsync(IPlayer player, IRewardable rewardable);
+    public Task DeletePlayerStatsAsync(Guid playerId);
         
 }
