@@ -1,5 +1,6 @@
 using SpaceCorpsServerShared.Entity;
 using SpaceCorpsServerShared.Item;
+using SpaceCorpsServerShared.Statistics;
 
 namespace SpaceCorpsServerShared.Players;
 
@@ -10,4 +11,5 @@ public interface IPlayer : IEntity
     public void ClearInventory();
     public IInventory GetInventory();
     public IStats GetStats();
+    void UpdateStats(IRewardable rewardable);
 }

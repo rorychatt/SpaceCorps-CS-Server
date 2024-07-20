@@ -31,7 +31,7 @@ public class StatisticsServer : IStatisticsServer
 
     public Task UpdatePlayerFromReward(IPlayer player, IRewardable rewardable)
     {
-        throw new NotImplementedException();
+        player.UpdateStats(rewardable);
     }
 
 }

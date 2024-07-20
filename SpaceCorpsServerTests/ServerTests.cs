@@ -4,6 +4,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SpaceCorpsServerShared;
+using SpaceCorpsServerShared.Players;
 using SpaceCorpsServerShared.Statistics;
 
 namespace SpaceCorpsServerTests.ServerTests;
@@ -72,5 +73,30 @@ public class ServerTests
 
         server.RewardServer.GetRewardsForUser(player.Id).Count.Should().Be(1);
     }
+
+    [Fact]
+    public async void TestServer_IssuesAndExecutes_StatsReward()
+    {
+        var port = 2005;
+        var loggerMock = new Mock<ILogger<Server>>();
+        var server = new Server(loggerMock.Object, port);
+
+        server.Start([]);
+
+        var client = new ClientWebSocket();
+        await client.ConnectAsync(new Uri($"ws://localhost:{port}"), CancellationToken.None);
+
+        var player = server.GetPlayers().First();
+
+        var stats = new Stats();
+        stats.SetThulium(10000);
+
+        await server.IssueRewardAsync(player.Id, new StatsReward(player.Id, stats));
+
+        await server.ProcessRewardTickAsync();
+
+        server.GetPlayer(player.Id).GetStats().GetThulium().Should().Be(10001);
+    }
+
 
 }

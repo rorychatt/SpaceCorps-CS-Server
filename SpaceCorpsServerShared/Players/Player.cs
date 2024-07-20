@@ -1,6 +1,7 @@
 
 using System.Numerics;
 using SpaceCorpsServerShared.Item;
+using SpaceCorpsServerShared.Statistics;
 
 namespace SpaceCorpsServerShared.Players
 {
@@ -45,6 +46,25 @@ namespace SpaceCorpsServerShared.Players
         public IStats GetStats()
         {
             return Stats;
+        }
+
+        public void UpdateStats(IRewardable rewardable)
+        {
+            if (rewardable is IItem item)
+            {
+                AddItem(item);
+            }
+            else if (rewardable is IStats stats)
+            {
+                Stats.AddCredits(stats.GetCredits());
+                Stats.AddThulium(stats.GetThulium());
+                Stats.AddExperience(stats.GetExperience());
+                Stats.AddHonor(stats.GetHonor());
+            }
+            else
+            {
+                throw new ArgumentException("Unknown rewardable type");
+            }
         }
     }
 }
