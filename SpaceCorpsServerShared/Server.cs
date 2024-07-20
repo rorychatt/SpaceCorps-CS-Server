@@ -39,7 +39,6 @@ public class Server : IServer
 
         _ = ListenForConnectionsAsync(httpListener);
 
-
     }
 
     public async Task ListenForConnectionsAsync(HttpListener httpListener)
@@ -167,6 +166,11 @@ public class Server : IServer
             rewardTasks.Add(HandlePlayerAsync(player));
         }
         await Task.WhenAll(rewardTasks);
+    }
+
+    public async Task IssueRewardAsync(Guid playerId, IRewardable rewardable)
+    {
+        await RewardServer.CreateRewardAsync(playerId, rewardable);
     }
 
 }

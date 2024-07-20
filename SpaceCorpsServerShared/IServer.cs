@@ -16,5 +16,6 @@ namespace SpaceCorpsServerShared
         public void SetupStatisticsServer(IStatisticsServer statisticsServer);
         public void SetRewardServer(IRewardServer rewardServer);
         public Task ProcessRewardTickAsync();
+        public Task IssueRewardAsync(Guid playerId, IRewardable rewardable);
     }
 }
