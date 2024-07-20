@@ -71,7 +71,6 @@ public class ServerTests
         await server.IssueRewardAsync(player.Id, new ItemReward(player.Id, 1));
 
         server.RewardServer.GetRewardsForUser(player.Id).Count.Should().Be(1);
-
     }
 
 }
