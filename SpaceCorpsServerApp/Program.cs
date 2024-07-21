@@ -1,10 +1,15 @@
-﻿using SpaceCorpsServerShared;
+﻿using Microsoft.Extensions.Logging;
+using Moq;
+using SpaceCorpsServerShared;
 
 class Program
 {
     static void Main(string[] args)
     {
-        Server server = new();
-        server.Start(args);
+        var port = 4000;
+        var loggerMock = new Mock<ILogger<Server>>();
+        var server = new Server(loggerMock.Object, port);
+
+        server.Start();
     }
 }

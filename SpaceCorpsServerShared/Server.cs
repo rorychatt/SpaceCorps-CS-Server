@@ -15,6 +15,7 @@ public class Server : IServer
     private readonly ILogger<Server> _logger;
     private int Port { get; }
     public IRewardServer RewardServer { get; private set; } = new RewardServer();
+    public Server(int port) : this(new LoggerFactory().CreateLogger<Server>(), port) { }
     public Server(ILogger<Server> logger, int port)
     {
         _logger = logger;
@@ -44,19 +45,19 @@ public class Server : IServer
     public async Task ListenForConnectionsAsync(HttpListener httpListener)
     {
         while (true)
-        {
+        {   
             HttpListenerContext httpContext = await httpListener.GetContextAsync();
             if (httpContext.Request.IsWebSocketRequest)
             {
                 HttpListenerWebSocketContext webSocketContext = await httpContext.AcceptWebSocketAsync(null);
                 _logger.LogInformation("WebSocket connection established");
-
+    
                 WebSocket webSocket = webSocketContext.WebSocket;
                 Guid playerId = Guid.NewGuid();
                 Player player = new(playerId);
                 players[playerId] = player;
                 sockets[playerId] = webSocket;
-
+    
                 await HandleWebSocketConnectionAsync(player);
             }
             else
