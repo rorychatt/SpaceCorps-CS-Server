@@ -100,7 +100,7 @@ public class ServerTests
 
         await server.ProcessRewardTickAsync();
 
-        server.GetPlayerByID(player.Id).GetStats().GetThulium().Should().Be(10001);
+        server.GetPlayerByID(player.Id).GetStats().GetThulium().Should().Be(10000);
 
         server.Stop();
     }

@@ -50,16 +50,28 @@ namespace SpaceCorpsServerShared.Players
 
         public void UpdateStats(IRewardable rewardable)
         {
-            if (rewardable is IItem item)
+            var rewardableType = rewardable.GetType();
+            var statisticsProperty = rewardableType.GetProperty("Statistics");
+            var itemProperty = rewardableType.GetProperty("Item");
+
+            if (statisticsProperty != null)
             {
-                AddItem(item);
+                var statistics = statisticsProperty.GetValue(rewardable);
+                if (statistics is IStats stats)
+                {
+                    Stats.AddCredits(stats.GetCredits());
+                    Stats.AddThulium(stats.GetThulium());
+                    Stats.AddExperience(stats.GetExperience());
+                    Stats.AddHonor(stats.GetHonor());
+                }
             }
-            else if (rewardable is IStats stats)
+            else if (itemProperty != null)
             {
-                Stats.AddCredits(stats.GetCredits());
-                Stats.AddThulium(stats.GetThulium());
-                Stats.AddExperience(stats.GetExperience());
-                Stats.AddHonor(stats.GetHonor());
+                var item = itemProperty.GetValue(rewardable);
+                if (item is IItem iItem)
+                {
+                    AddItem(iItem);
+                }
             }
             else
             {
