@@ -8,7 +8,7 @@ public class DBHandler(MySqlConnection connection, ILogger<DBHandler> logger) : 
 {
     private MySqlConnection connection = connection;
     private ILogger<DBHandler> logger = logger;
-    
+
     public void CreateMissingTables()
     {
         throw new NotImplementedException();
@@ -21,12 +21,10 @@ public class DBHandler(MySqlConnection connection, ILogger<DBHandler> logger) : 
         var tableNames = new List<string>();
         using (var command = new MySqlCommand("SHOW TABLES", connection))
         {
-            using (var reader = command.ExecuteReader())
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
             {
-                while (reader.Read())
-                {
-                    tableNames.Add(reader[0].ToString()!);
-                }
+                tableNames.Add(reader[0].ToString()!);
             }
         }
 
@@ -36,14 +34,12 @@ public class DBHandler(MySqlConnection connection, ILogger<DBHandler> logger) : 
 
             using (var commandDescribe = new MySqlCommand($"DESCRIBE {tableName}", connection))
             {
-                using (var readerDescribe = commandDescribe.ExecuteReader())
+                using var readerDescribe = commandDescribe.ExecuteReader();
+                while (readerDescribe.Read())
                 {
-                    while (readerDescribe.Read())
-                    {
-                        var fieldName = readerDescribe[0].ToString();
-                        var fieldType = readerDescribe[1].ToString();
-                        fields.Add(new KeyValuePair<string, string>(fieldName!, fieldType!));
-                    }
+                    var fieldName = readerDescribe[0].ToString();
+                    var fieldType = readerDescribe[1].ToString();
+                    fields.Add(new KeyValuePair<string, string>(fieldName!, fieldType!));
                 }
             }
 
@@ -74,5 +70,30 @@ public class DBHandler(MySqlConnection connection, ILogger<DBHandler> logger) : 
     {
         this.connection = connection;
     }
-    
+
+    public async Task<List<Dictionary<string, object>>> GetPlayersStatsAsync()
+    {
+        var playersStats = new List<Dictionary<string, object>>();
+
+        string query = "SELECT * FROM playerEntity";
+
+        using (var command = new MySqlCommand(query, connection))
+        {
+            using (var reader = await command.ExecuteReaderAsync())
+            {
+                while (await reader.ReadAsync())
+                {
+                    var playerStat = new Dictionary<string, object>();
+
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        playerStat[reader.GetName(i)] = reader.GetValue(i);
+                    }
+
+                    playersStats.Add(playerStat);
+                }
+            }
+        }
+        return playersStats;
+    }
 }
