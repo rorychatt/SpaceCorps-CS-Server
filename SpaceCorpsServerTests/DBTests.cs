@@ -45,6 +45,20 @@ public class DBTests
         Assert.True(players.Count > 0);
     }
 
+    [Fact]
+    public async void CreatesMissingPlayerEntityTable()
+    {
+        var db = new DB(connectionString, logger);
+
+        db.OpenConnection();
+        await db.GetDBHandler().CreatePlayerEntityTableIfNotExistsAsync();
+        var players = await db.GetDBHandler().GetPlayersStatsAsync();
+
+        db.CloseConnection();
+
+        Assert.True(players.Count >= 0);
+    }
+
 
 
 
