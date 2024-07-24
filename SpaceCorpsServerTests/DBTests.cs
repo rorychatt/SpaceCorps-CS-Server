@@ -59,7 +59,19 @@ public class DBTests
         Assert.True(players.Count >= 0);
     }
 
+    [Fact]
+    public async void CanLoad_PlayerEntityStats_FromDB()
+    {
+        var db = new DB(connectionString, logger);
 
+        db.OpenConnection();
+        var players = await db.GetDBHandler().GetPlayersStatsAsync();
+        db.CloseConnection();
 
+        var playerStats = players.FirstOrDefault();
+        var userName = playerStats.username;
+
+        Assert.NotNull(player);
+    }
 
 }
