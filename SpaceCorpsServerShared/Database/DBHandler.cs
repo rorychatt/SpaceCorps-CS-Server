@@ -96,4 +96,24 @@ public class DBHandler(MySqlConnection connection, ILogger<DBHandler> logger) : 
         }
         return playersStats;
     }
+
+    public async Task CreatePlayerEntityTableIfNotExistsAsync()
+    {
+        string createTableQuery = @"
+        CREATE TABLE IF NOT EXISTS playerEntity (
+            username VARCHAR(255),
+            mapName VARCHAR(255),
+            company VARCHAR(255),
+            positionX FLOAT,
+            positionY FLOAT,
+            credits INT,
+            thulium INT,
+            experience INT,
+            honor INT,
+            level INT
+        );
+    ";
+
+        await ExecuteSqlCommandAsync(createTableQuery);
+    }
 }

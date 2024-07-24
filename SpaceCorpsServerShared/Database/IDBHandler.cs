@@ -11,4 +11,5 @@ public interface IDBHandler
     public void SetMySQLConnection(MySqlConnection connection);
     public Dictionary<string, List<KeyValuePair<string, string>>> GetSchema();
     Task<List<Dictionary<string, object>>> GetPlayersStatsAsync();
+    public Task CreatePlayerEntityTableIfNotExistsAsync();
 }
