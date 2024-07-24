@@ -1,3 +1,5 @@
+using MySql.Data.MySqlClient;
+
 namespace SpaceCorpsServerShared.Players;
 
 public interface IPlayerEntityDTO

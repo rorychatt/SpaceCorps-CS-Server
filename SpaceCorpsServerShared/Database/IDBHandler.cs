@@ -10,6 +10,6 @@ public interface IDBHandler
     public Task ExecuteSqlCommandAsync(string sqlCommand);
     public void SetMySQLConnection(MySqlConnection connection);
     public Dictionary<string, List<KeyValuePair<string, string>>> GetSchema();
-    Task<List<Dictionary<string, object>>> GetPlayersStatsAsync();
+    Task<Dictionary<string, IPlayerEntityDTO>> GetPlayersStatsAsync();
     public Task CreatePlayerEntityTableIfNotExistsAsync();
 }

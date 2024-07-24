@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using SpaceCorpsServerShared.Players;
@@ -71,32 +70,24 @@ public class DBHandler(MySqlConnection connection, ILogger<DBHandler> logger) : 
         this.connection = connection;
     }
 
-    public async Task<List<Dictionary<string, object>>> GetPlayersStatsAsync()
+    public async Task<Dictionary<string, IPlayerEntityDTO>> GetPlayersStatsAsync()
     {
-        var playersStats = new List<Dictionary<string, object>>();
-
+        var playersStats = new Dictionary<string, IPlayerEntityDTO>();
         string query = "SELECT * FROM playerEntity";
 
         using (var command = new MySqlCommand(query, connection))
         {
-            using (var reader = await command.ExecuteReaderAsync())
+            using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
             {
-                while (await reader.ReadAsync())
-                {
-                    var playerStat = new Dictionary<string, object>();
-
-                    for (int i = 0; i < reader.FieldCount; i++)
-                    {
-                        playerStat[reader.GetName(i)] = reader.GetValue(i);
-                    }
-
-                    playersStats.Add(playerStat);
-                }
+                //TODO: Implement this
+                // var playerStat = new PlayerEntityDTO(reader);
+                // playersStats.Add(playerStat);
             }
         }
+
         return playersStats;
     }
-
     public async Task CreatePlayerEntityTableIfNotExistsAsync()
     {
         string createTableQuery = @"

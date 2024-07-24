@@ -1,3 +1,4 @@
+using MySql.Data.MySqlClient;
 namespace SpaceCorpsServerShared.Players;
 
 public record PlayerEntityDTO : IPlayerEntityDTO
@@ -13,17 +14,17 @@ public record PlayerEntityDTO : IPlayerEntityDTO
     public int Honor { get; init; }
     public int Level { get; init; }
 
-    public PlayerEntityDTO(string username, string mapName, string companyName, float positionX, float positionY, int credits, int thulium, int experience, int honor, int level)
+    public PlayerEntityDTO(Dictionary<string, object> parameters)
     {
-        Username = username;
-        MapName = mapName;
-        CompanyName = companyName;
-        PositionX = positionX;
-        PositionY = positionY;
-        Credits = credits;
-        Thulium = thulium;
-        Experience = experience;
-        Honor = honor;
-        Level = level;
+        Username = parameters["username"].ToString()!;
+        MapName = parameters["mapName"].ToString()!;
+        CompanyName = parameters["companyName"].ToString()!;
+        PositionX = Convert.ToSingle(parameters["positionX"]);
+        PositionY = Convert.ToSingle(parameters["positionY"]);
+        Credits = Convert.ToInt32(parameters["credits"]);
+        Thulium = Convert.ToInt32(parameters["thulium"]);
+        Experience = Convert.ToInt32(parameters["experience"]);
+        Honor = Convert.ToInt32(parameters["honor"]);
+        Level = Convert.ToInt32(parameters["level"]);
     }
 }
