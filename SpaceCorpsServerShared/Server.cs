@@ -3,10 +3,10 @@ using System.Net;
 using System.Net.WebSockets;
 using System.Text;
 using Microsoft.Extensions.Logging;
-using SpaceCorpsServerShared;
 using SpaceCorpsServerShared.Players;
 using SpaceCorpsServerShared.Statistics;
 
+namespace SpaceCorpsServerShared;
 public class Server : IServer
 {
     private readonly ConcurrentDictionary<Guid, IPlayer> players = new();

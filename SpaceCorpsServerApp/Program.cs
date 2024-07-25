@@ -2,6 +2,7 @@
 using Moq;
 using SpaceCorpsServerShared;
 
+namespace SpaceCorpsServerApp;
 class Program
 {
     static void Main(string[] args)
