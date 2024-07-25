@@ -79,11 +79,16 @@ public class DBHandler(MySqlConnection connection, ILogger<DBHandler> logger) : 
         await using var reader = await command.ExecuteReaderAsync();
         while (await reader.ReadAsync())
         {
-            //TODO: Implement this
-            // var playerStat = new PlayerEntityDTO(reader);
-            // playersStats.Add(playerStat);
-        }
+            Dictionary<string, object> parameters = new();
+            for (var i = 0; i < reader.FieldCount; i++)
+            {
+                parameters.Add(reader.GetName(i), reader.GetValue(i));
+            }
 
+            var playerStat = new PlayerEntityDTO(parameters);
+
+            playersStats.Add(playerStat.Username, playerStat);
+        }
         return playersStats;
     }
     public async Task CreatePlayerEntityTableIfNotExistsAsync()

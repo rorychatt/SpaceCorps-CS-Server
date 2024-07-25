@@ -18,7 +18,7 @@ public record PlayerEntityDTO : IPlayerEntityDTO
     {
         Username = parameters["username"].ToString()!;
         MapName = parameters["mapName"].ToString()!;
-        CompanyName = parameters["companyName"].ToString()!;
+        CompanyName = parameters["company"].ToString()!;
         PositionX = Convert.ToSingle(parameters["positionX"]);
         PositionY = Convert.ToSingle(parameters["positionY"]);
         Credits = Convert.ToInt32(parameters["credits"]);
