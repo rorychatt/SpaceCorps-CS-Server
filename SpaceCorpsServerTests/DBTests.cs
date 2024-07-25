@@ -4,16 +4,14 @@ namespace SpaceCorpsServerTests.DBTests;
 
 public class DBTests
 {
-
-    static readonly string connectionString = "Server=rorycraft.com;Database=spacecorps;Uid=server;Pwd=popapenis123;";
-    static readonly ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
-    static readonly ILogger<DBHandler> logger = loggerFactory.CreateLogger<DBHandler>();
-
-
+    private static readonly string ConnectionString = "Server=rorycraft.com;Database=spacecorps;Uid=server;Pwd=popapenis123;";
+    private static readonly ILoggerFactory LoggerFactory = Microsoft.Extensions.Logging.LoggerFactory.Create(builder => builder.AddConsole());
+    private static readonly ILogger<DBHandler> Logger = LoggerFactory.CreateLogger<DBHandler>();
+    
     [Fact]
     public void CanConnect_ToDB()
     {
-        var db = new DB(connectionString, logger);
+        var db = new DB(ConnectionString, Logger);
 
         db.OpenConnection();
         db.CloseConnection();
@@ -24,7 +22,7 @@ public class DBTests
     [Fact]
     public void Gets_All_Tables_Remote()
     {
-        var db = new DB(connectionString, logger);
+        var db = new DB(ConnectionString, Logger);
 
         db.OpenConnection();
         var tableSchema = db.GetDBHandler().GetSchema();
@@ -36,7 +34,7 @@ public class DBTests
     [Fact]
     public async Task Gets_Players_DataAsync()
     {
-        var db = new DB(connectionString, logger);
+        var db = new DB(ConnectionString, Logger);
 
         db.OpenConnection();
         var players = await db.GetDBHandler().GetPlayersStatsAsync();
@@ -48,7 +46,7 @@ public class DBTests
     [Fact]
     public async void CreatesMissingPlayerEntityTable()
     {
-        var db = new DB(connectionString, logger);
+        var db = new DB(ConnectionString, Logger);
 
         db.OpenConnection();
         await db.GetDBHandler().CreatePlayerEntityTableIfNotExistsAsync();
@@ -62,7 +60,7 @@ public class DBTests
     [Fact]
     public async void CanLoad_PlayerEntityStats_FromDB()
     {
-        var db = new DB(connectionString, logger);
+        var db = new DB(ConnectionString, Logger);
 
         db.OpenConnection();
         var players = await db.GetDBHandler().GetPlayersStatsAsync();
