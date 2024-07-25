@@ -5,8 +5,8 @@ using SpaceCorpsServerShared.Players;
 namespace SpaceCorpsServerShared.Database;
 public class DBHandler(MySqlConnection connection, ILogger<DBHandler> logger) : IDBHandler
 {
-    private MySqlConnection connection = connection;
-    private ILogger<DBHandler> logger = logger;
+    private MySqlConnection _connection = connection;
+    private ILogger<DBHandler> _logger = logger;
 
     public void CreateMissingTables()
     {
@@ -18,7 +18,7 @@ public class DBHandler(MySqlConnection connection, ILogger<DBHandler> logger) : 
         var tables = new Dictionary<string, List<KeyValuePair<string, string>>>();
 
         var tableNames = new List<string>();
-        using (var command = new MySqlCommand("SHOW TABLES", connection))
+        using (var command = new MySqlCommand("SHOW TABLES", _connection))
         {
             using var reader = command.ExecuteReader();
             while (reader.Read())
@@ -31,7 +31,7 @@ public class DBHandler(MySqlConnection connection, ILogger<DBHandler> logger) : 
         {
             var fields = new List<KeyValuePair<string, string>>();
 
-            using (var commandDescribe = new MySqlCommand($"DESCRIBE {tableName}", connection))
+            using (var commandDescribe = new MySqlCommand($"DESCRIBE {tableName}", _connection))
             {
                 using var readerDescribe = commandDescribe.ExecuteReader();
                 while (readerDescribe.Read())
@@ -55,35 +55,33 @@ public class DBHandler(MySqlConnection connection, ILogger<DBHandler> logger) : 
     {
         try
         {
-            using var command = new MySqlCommand(sqlCommand, connection);
+            using var command = new MySqlCommand(sqlCommand, _connection);
             await command.ExecuteNonQueryAsync();
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "An error occurred while executing the SQL command: {SqlCommand}", sqlCommand);
+            _logger.LogError(ex, "An error occurred while executing the SQL command: {SqlCommand}", sqlCommand);
             throw;
         }
     }
 
     public void SetMySQLConnection(MySqlConnection connection)
     {
-        this.connection = connection;
+        this._connection = connection;
     }
 
     public async Task<Dictionary<string, IPlayerEntityDTO>> GetPlayersStatsAsync()
     {
         var playersStats = new Dictionary<string, IPlayerEntityDTO>();
-        string query = "SELECT * FROM playerEntity";
+        const string query = "SELECT * FROM playerEntity";
 
-        using (var command = new MySqlCommand(query, connection))
+        await using var command = new MySqlCommand(query, _connection);
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
         {
-            using var reader = await command.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                //TODO: Implement this
-                // var playerStat = new PlayerEntityDTO(reader);
-                // playersStats.Add(playerStat);
-            }
+            //TODO: Implement this
+            // var playerStat = new PlayerEntityDTO(reader);
+            // playersStats.Add(playerStat);
         }
 
         return playersStats;
