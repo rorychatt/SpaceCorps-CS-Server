@@ -1,4 +1,4 @@
-###SpaceCorps-CS-Server
+# SpaceCorps-CS-Server
 
 ## Overview
 SpaceCorps-CS-Server is a server application written in C#. This repository contains the backend code for the SpaceCorps project, handling game logic, data management, and client-server communication.
