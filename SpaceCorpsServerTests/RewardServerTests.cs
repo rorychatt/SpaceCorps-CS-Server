@@ -1,7 +1,7 @@
 using SpaceCorpsServerShared.Players;
 using SpaceCorpsServerShared.Statistics;
 
-namespace SpaceCorpsServerTests.RewardServerTests;
+namespace SpaceCorpsServerTests;
 
 public class RewardServerTests
 {

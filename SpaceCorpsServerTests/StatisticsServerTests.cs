@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using SpaceCorpsServerShared;
-using SpaceCorpsServerShared.Statistics;
 
 namespace SpaceCorpsServerTests;
 public class StatisticsServerTests
@@ -13,7 +12,7 @@ public class StatisticsServerTests
         var loggerMock = new Mock<ILogger<Server>>();
         var server = new Server(loggerMock.Object, port);
 
-        IStatisticsServer statisticsServer = server.GetStatisticsServer();
+        var statisticsServer = server.GetStatisticsServer();
         Assert.NotNull(statisticsServer);
     }
 }

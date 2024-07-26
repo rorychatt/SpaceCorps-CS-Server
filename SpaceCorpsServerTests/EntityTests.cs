@@ -1,8 +1,8 @@
 using System.Numerics;
-using SpaceCorpsServerShared.Item;
+using SpaceCorpsServerShared.Items;
 using SpaceCorpsServerShared.Players;
 
-namespace SpaceCorpsServerTests.EntityTests;
+namespace SpaceCorpsServerTests;
 
 public class EntityTests
 {

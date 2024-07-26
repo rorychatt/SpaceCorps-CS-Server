@@ -3,43 +3,43 @@ using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 
 namespace SpaceCorpsServerShared.Database;
-public class DB : IDB
+public class Db : IDb
 {
-    private MySqlConnection connection;
-    private IDBHandler dbHandler;
-    private readonly ILogger<DBHandler> logger;
+    private readonly MySqlConnection _connection;
+    private IDbHandler _dbHandler;
+    private readonly ILogger<DBHandler> _logger;
 
-    public DB(string connectionString, ILogger<DBHandler> logger)
+    public Db(string connectionString, ILogger<DBHandler> logger)
     {
-        this.logger = logger;
-        connection = new MySqlConnection(connectionString);
-        dbHandler = new DBHandler(connection, logger);
+        this._logger = logger;
+        _connection = new MySqlConnection(connectionString);
+        _dbHandler = new DBHandler(_connection, logger);
     }
 
     public void OpenConnection()
     {
         try
         {
-            connection.Open();
+            _connection.Open();
         }
         catch (Exception ex)
         {
-            logger.LogInformation("Cannot open connection to database. Error: {Message}", ex.Message);
+            _logger.LogInformation("Cannot open connection to database. Error: {Message}", ex.Message);
         }
     }
 
     public void CloseConnection()
     {
-        connection.Close();
+        _connection.Close();
     }
 
-    public void SetDBHandler(IDBHandler _dbHandler)
+    public void SetDbHandler(IDbHandler _dbHandler)
     {
-        dbHandler = _dbHandler;
+        this._dbHandler = _dbHandler;
     }
 
-    public IDBHandler GetDBHandler()
+    public IDbHandler GetDbHandler()
     {
-        return dbHandler;
+        return _dbHandler;
     }
 }

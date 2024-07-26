@@ -2,10 +2,10 @@ using MySql.Data.MySqlClient;
 
 namespace SpaceCorpsServerShared.Database;
 
-public interface IDB
+public interface IDb
 {
-    public void SetDBHandler(IDBHandler dbHandler);
-    public IDBHandler GetDBHandler();
+    public void SetDbHandler(IDbHandler dbHandler);
+    public IDbHandler GetDbHandler();
     public void OpenConnection();
     public void CloseConnection();
 }

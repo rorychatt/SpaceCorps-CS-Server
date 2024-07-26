@@ -1,7 +1,6 @@
-
 using SpaceCorpsServerShared.Statistics;
 
-namespace SpaceCorpsServerShared.Item;
+namespace SpaceCorpsServerShared.Items;
 
 public class ShipItem : IItem, IRewardable
 {

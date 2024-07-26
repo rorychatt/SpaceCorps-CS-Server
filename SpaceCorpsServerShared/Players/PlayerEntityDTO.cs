@@ -1,7 +1,7 @@
 using MySql.Data.MySqlClient;
 namespace SpaceCorpsServerShared.Players;
 
-public record PlayerEntityDTO : IPlayerEntityDTO
+public record PlayerEntityDto : IPlayerEntityDto
 {
     public string Username { get; init; }
     public string MapName { get; init; }
@@ -14,7 +14,7 @@ public record PlayerEntityDTO : IPlayerEntityDTO
     public int Honor { get; init; }
     public int Level { get; init; }
 
-    public PlayerEntityDTO(Dictionary<string, object> parameters)
+    public PlayerEntityDto(Dictionary<string, object> parameters)
     {
         Username = parameters["username"].ToString()!;
         MapName = parameters["mapName"].ToString()!;

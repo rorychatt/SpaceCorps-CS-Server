@@ -1,17 +1,18 @@
 using Microsoft.Extensions.Logging;
 using SpaceCorpsServerShared.Database;
-namespace SpaceCorpsServerTests.DBTests;
 
-public class DBTests
+namespace SpaceCorpsServerTests;
+
+public class DbTests
 {
-    private static readonly string ConnectionString = "Server=rorycraft.com;Database=spacecorps;Uid=server;Pwd=popapenis123;";
+    private const string ConnectionString = "Server=rorycraft.com;Database=spacecorps;Uid=server;Pwd=popapenis123;";
     private static readonly ILoggerFactory LoggerFactory = Microsoft.Extensions.Logging.LoggerFactory.Create(builder => builder.AddConsole());
     private static readonly ILogger<DBHandler> Logger = LoggerFactory.CreateLogger<DBHandler>();
     
     [Fact]
     public void CanConnect_ToDB()
     {
-        var db = new DB(ConnectionString, Logger);
+        var db = new Db(ConnectionString, Logger);
 
         db.OpenConnection();
         db.CloseConnection();
@@ -22,10 +23,10 @@ public class DBTests
     [Fact]
     public void Gets_All_Tables_Remote()
     {
-        var db = new DB(ConnectionString, Logger);
+        var db = new Db(ConnectionString, Logger);
 
         db.OpenConnection();
-        var tableSchema = db.GetDBHandler().GetSchema();
+        var tableSchema = db.GetDbHandler().GetSchema();
         db.CloseConnection();
 
         Assert.True(tableSchema.Count > 0);
@@ -34,10 +35,10 @@ public class DBTests
     [Fact]
     public async Task Gets_Players_DataAsync()
     {
-        var db = new DB(ConnectionString, Logger);
+        var db = new Db(ConnectionString, Logger);
 
         db.OpenConnection();
-        var players = await db.GetDBHandler().GetPlayersStatsAsync();
+        var players = await db.GetDbHandler().GetPlayersStatsAsync();
         db.CloseConnection();
 
         Assert.True(players.Count > 0);
@@ -46,11 +47,11 @@ public class DBTests
     [Fact]
     public async void CreatesMissingPlayerEntityTable()
     {
-        var db = new DB(ConnectionString, Logger);
+        var db = new Db(ConnectionString, Logger);
 
         db.OpenConnection();
-        await db.GetDBHandler().CreatePlayerEntityTableIfNotExistsAsync();
-        var players = await db.GetDBHandler().GetPlayersStatsAsync();
+        await db.GetDbHandler().CreatePlayerEntityTableIfNotExistsAsync();
+        var players = await db.GetDbHandler().GetPlayersStatsAsync();
 
         db.CloseConnection();
 
@@ -60,10 +61,10 @@ public class DBTests
     [Fact]
     public async void CanLoad_PlayerEntityStats_FromDB()
     {
-        var db = new DB(ConnectionString, Logger);
+        var db = new Db(ConnectionString, Logger);
 
         db.OpenConnection();
-        var players = await db.GetDBHandler().GetPlayersStatsAsync();
+        var players = await db.GetDbHandler().GetPlayersStatsAsync();
         db.CloseConnection();
 
         var playerStats = players.FirstOrDefault();

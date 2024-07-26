@@ -1,4 +1,4 @@
-using SpaceCorpsServerShared.Item;
+using SpaceCorpsServerShared.Items;
 
 namespace SpaceCorpsServerShared.Players;
 public interface IInventory

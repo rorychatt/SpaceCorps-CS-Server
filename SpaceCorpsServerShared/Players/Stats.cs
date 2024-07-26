@@ -4,78 +4,70 @@ namespace SpaceCorpsServerShared.Players;
 
 public class Stats : IStats
 {
-    private int Credits;
-    private int Thulium;
-    private int Honor;
-    private int Experience;
-
-    public Stats()
-    {
-        Credits = 0;
-        Thulium = 0;
-        Honor = 0;
-        Experience = 0;
-    }
+    private int _credits = 0;
+    private int _thulium = 0;
+    private int _honor = 0;
+    private int _experience = 0;
 
     public void AddCredits(int credits)
     {
-        Credits += credits;
+        _credits += credits;
     }
 
     public int AddExperience(int experience)
     {
-        Experience += experience;
-        return Experience;
+        _experience += experience;
+        return _experience;
     }
 
     public void AddHonor(int honor)
     {
-        Honor += honor;
+        _honor += honor;
     }
 
     public void AddThulium(int thulium)
     {
-        Thulium += thulium;
+        _thulium += thulium;
     }
     
     public int GetCredits()
     {
-        return Credits;
+        return _credits;
     }
 
     public int GetExperience()
     {
-        return Experience;
+        return _experience;
     }
 
     public int GetHonor()
     {
-        return Honor;
+        return _honor;
     }
 
     public int GetThulium()
     {
-        return Thulium;
+        return _thulium;
     }
 
     public void SetCredits(int credits)
     {
-        Credits = credits;
+        _credits = credits;
     }
 
     public int SetExperience(int experience)
     {
-        Experience = experience;
-        return Experience;
+        _experience = experience;
+        return _experience;
     }
 
     public void SetHonor(int honor)
     {
-        Honor = honor;
+        _honor = honor;
     }
 
     public void SetThulium(int thulium)
     {
-        Thulium = thulium;
+        _thulium = thulium;
     }
 }

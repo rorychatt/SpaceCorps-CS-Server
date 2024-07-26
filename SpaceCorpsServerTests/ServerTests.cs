@@ -1,4 +1,3 @@
-using System.Net;
 using System.Net.WebSockets;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -7,7 +6,7 @@ using SpaceCorpsServerShared;
 using SpaceCorpsServerShared.Players;
 using SpaceCorpsServerShared.Statistics;
 
-namespace SpaceCorpsServerTests.ServerTests;
+namespace SpaceCorpsServerTests;
 
 public class ServerTests
 {
@@ -15,7 +14,7 @@ public class ServerTests
     [Fact]
     public void TestServer_Start_No_Crash()
     {
-        var port = 2000;
+        const int port = 2000;
         var loggerMock = new Mock<ILogger<Server>>();
         var server = new Server(loggerMock.Object, port);
         server.Start();
@@ -25,7 +24,7 @@ public class ServerTests
     [Fact]
     public async void TestServer_Connects()
     {
-        var port = 2001;
+        const int port = 2001;
         var loggerMock = new Mock<ILogger<Server>>();
         var server = new Server(loggerMock.Object, port);
 
@@ -40,7 +39,7 @@ public class ServerTests
     [Fact]
     public async void TestServer_CreatesPlayer_OnJoin()
     {
-        var port = 2002;
+        const int port = 2002;
         var loggerMock = new Mock<ILogger<Server>>();
         var server = new Server(loggerMock.Object, port);
 
@@ -50,7 +49,9 @@ public class ServerTests
         await client.ConnectAsync(new Uri($"ws://localhost:{port}"), CancellationToken.None);
 
         Assert.Equal(WebSocketState.Open, client.State);
-        server.GetPlayers().Count().Equals(1);
+        
+        var players = server.GetPlayers();
+        Assert.Single(players);
 
         server.Stop();
     }
@@ -58,7 +59,7 @@ public class ServerTests
     [Fact]
     public async void TestServer_RegistersReward()
     {
-        var port = 2003;
+        const int port = 2003;
         var loggerMock = new Mock<ILogger<Server>>();
         var server = new Server(loggerMock.Object, port);
 
@@ -82,7 +83,7 @@ public class ServerTests
     [Fact]
     public async void TestServer_IssuesAndExecutes_StatsReward()
     {
-        var port = 2005;
+        const int port = 2005;
         var loggerMock = new Mock<ILogger<Server>>();
         var server = new Server(loggerMock.Object, port);
 
@@ -100,7 +101,7 @@ public class ServerTests
 
         await server.ProcessRewardTickAsync();
 
-        server.GetPlayerByID(player.Id).GetStats().GetThulium().Should().Be(10000);
+        server.GetPlayerById(player.Id).GetStats().GetThulium().Should().Be(10000);
 
         server.Stop();
     }

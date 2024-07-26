@@ -4,12 +4,12 @@ using SpaceCorpsServerShared.Players;
 
 namespace SpaceCorpsServerShared.Database;
 
-public interface IDBHandler
+public interface IDbHandler
 {
     public void CreateMissingTables();
     public Task ExecuteSqlCommandAsync(string sqlCommand);
-    public void SetMySQLConnection(MySqlConnection connection);
+    public void SetMySqlConnection(MySqlConnection connection);
     public Dictionary<string, List<KeyValuePair<string, string>>> GetSchema();
-    Task<Dictionary<string, IPlayerEntityDTO>> GetPlayersStatsAsync();
+    Task<Dictionary<string, IPlayerEntityDto>> GetPlayersStatsAsync();
     public Task CreatePlayerEntityTableIfNotExistsAsync();
 }

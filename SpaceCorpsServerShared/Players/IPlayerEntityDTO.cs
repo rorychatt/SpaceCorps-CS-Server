@@ -2,7 +2,7 @@ using MySql.Data.MySqlClient;
 
 namespace SpaceCorpsServerShared.Players;
 
-public interface IPlayerEntityDTO
+public interface IPlayerEntityDto
 {
     public string Username { get; init; }
     public string MapName { get; init; }

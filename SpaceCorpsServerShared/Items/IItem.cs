@@ -1,4 +1,4 @@
-namespace SpaceCorpsServerShared.Item;
+namespace SpaceCorpsServerShared.Items;
 
 public interface IItem
 {

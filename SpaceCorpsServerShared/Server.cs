@@ -7,24 +7,18 @@ using SpaceCorpsServerShared.Players;
 using SpaceCorpsServerShared.Statistics;
 
 namespace SpaceCorpsServerShared;
-public class Server : IServer
+public class Server(ILogger<Server> logger, int port) : IServer
 {
-    private readonly ConcurrentDictionary<Guid, IPlayer> players = new();
-    private readonly ConcurrentDictionary<Guid, WebSocket> sockets = new();
-    private IStatisticsServer statisticsServer = new StatisticsServer();
-    private readonly ILogger<Server> _logger;
-    private int Port { get; }
+    private readonly ConcurrentDictionary<Guid, IPlayer> _players = new();
+    private readonly ConcurrentDictionary<Guid, WebSocket> _sockets = new();
+    private IStatisticsServer _statisticsServer = new StatisticsServer();
+    private readonly ILogger<Server> _logger = logger;
+    private int Port { get; } = port;
     public IRewardServer RewardServer { get; private set; } = new RewardServer();
     public Server(int port) : this(new LoggerFactory().CreateLogger<Server>(), port) { }
-    public Server(ILogger<Server> logger, int port)
-    {
-        _logger = logger;
-        Port = port;
-    }
 
-    public Server()
+    public Server() : this(new LoggerFactory().CreateLogger<Server>(), 0)
     {
-        _logger = new LoggerFactory().CreateLogger<Server>();
     }
 
     public void Start()
@@ -46,17 +40,17 @@ public class Server : IServer
     {
         while (true)
         {   
-            HttpListenerContext httpContext = await httpListener.GetContextAsync();
+            var httpContext = await httpListener.GetContextAsync();
             if (httpContext.Request.IsWebSocketRequest)
             {
-                HttpListenerWebSocketContext webSocketContext = await httpContext.AcceptWebSocketAsync(null);
+                var webSocketContext = await httpContext.AcceptWebSocketAsync(null);
                 _logger.LogInformation("WebSocket connection established");
     
-                WebSocket webSocket = webSocketContext.WebSocket;
-                Guid playerId = Guid.NewGuid();
+                var webSocket = webSocketContext.WebSocket;
+                var playerId = Guid.NewGuid();
                 Player player = new(playerId);
-                players[playerId] = player;
-                sockets[playerId] = webSocket;
+                _players[playerId] = player;
+                _sockets[playerId] = webSocket;
     
                 await HandleWebSocketConnectionAsync(player);
             }
@@ -69,17 +63,17 @@ public class Server : IServer
     }
     public async Task HandleWebSocketConnectionAsync(IPlayer player)
     {
-        WebSocket webSocket = sockets[player.Id];
-        byte[] buffer = new byte[1024 * 4];
-        WebSocketReceiveResult result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+        var webSocket = _sockets[player.Id];
+        var buffer = new byte[1024 * 4];
+        var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
 
         while (result.MessageType != WebSocketMessageType.Close)
         {
-            string receivedMessage = Encoding.UTF8.GetString(buffer, 0, result.Count);
+            var receivedMessage = Encoding.UTF8.GetString(buffer, 0, result.Count);
             _logger.LogInformation("Received from {PlayerId}: {ReceivedMessage}", player.Id, receivedMessage);
 
-            string responseMessage = $"Echo from {player.Id}: {receivedMessage}";
-            byte[] responseBuffer = Encoding.UTF8.GetBytes(responseMessage);
+            var responseMessage = $"Echo from {player.Id}: {receivedMessage}";
+            var responseBuffer = Encoding.UTF8.GetBytes(responseMessage);
             await webSocket.SendAsync(new ArraySegment<byte>(responseBuffer), WebSocketMessageType.Text, true, CancellationToken.None);
 
             result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
@@ -88,29 +82,29 @@ public class Server : IServer
         await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
         _logger.LogInformation("WebSocket connection closed for player {PlayerId}", player.Id);
 
-        players.TryRemove(player.Id, out _);
+        _players.TryRemove(player.Id, out _);
     }
     public async Task DisconnectPlayer(Guid playerId)
     {
-        if (players.TryGetValue(playerId, out _))
+        if (_players.TryGetValue(playerId, out _))
         {
-            var socket = sockets[playerId];
+            var socket = _sockets[playerId];
             await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Disconnected by server", CancellationToken.None);
             _logger.LogInformation("Player {PlayerId} has been disconnected", playerId);
 
-            players.TryRemove(playerId, out _);
-            sockets.TryRemove(playerId, out _);
+            _players.TryRemove(playerId, out _);
+            _sockets.TryRemove(playerId, out _);
         }
     }
 
     public IEnumerable<IPlayer> GetPlayers()
     {
-        return players.Values;
+        return _players.Values;
     }
 
     public void Stop()
     {
-        foreach (var socket in sockets.Values)
+        foreach (var socket in _sockets.Values)
         {
             if (socket.State == WebSocketState.Open)
             {
@@ -118,25 +112,25 @@ public class Server : IServer
             }
         }
 
-        sockets.Clear();
-        players.Clear();
+        _sockets.Clear();
+        _players.Clear();
 
         _logger.LogInformation("Server stopped");
     }
 
-    public void SetupStatisticsServer(IStatisticsServer _statisticsServer)
+    public void SetupStatisticsServer(IStatisticsServer statisticsServer)
     {
-        statisticsServer = _statisticsServer;
+        this._statisticsServer = statisticsServer;
     }
 
     public IStatisticsServer GetStatisticsServer()
     {
-        return statisticsServer;
+        return _statisticsServer;
     }
 
-    public IPlayer GetPlayerByID(Guid playerId)
+    public IPlayer GetPlayerById(Guid playerId)
     {
-        return players[playerId];
+        return _players[playerId];
     }
 
     public void SetRewardServer(IRewardServer rewardServer)
@@ -147,7 +141,7 @@ public class Server : IServer
     public async Task ProcessRewardTickAsync()
     {
         var rewardTasks = new List<Task>();
-        foreach (IPlayer player in players.Values)
+        foreach (IPlayer player in _players.Values)
         {
             async Task HandlePlayerAsync(IPlayer p)
             {
@@ -156,7 +150,7 @@ public class Server : IServer
                     var rewardResult = await RewardServer.HandleRewardsForUserAsync(p.Id);
                     if (rewardResult != null)
                     {
-                        await statisticsServer.UpdatePlayerFromRewardAsync(p, rewardResult);
+                        await _statisticsServer.UpdatePlayerFromRewardAsync(p, rewardResult);
                     }
                 }
                 catch (Exception ex)

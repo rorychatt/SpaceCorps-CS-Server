@@ -1,5 +1,5 @@
 using SpaceCorpsServerShared.Entity;
-using SpaceCorpsServerShared.Item;
+using SpaceCorpsServerShared.Items;
 using SpaceCorpsServerShared.Statistics;
 
 namespace SpaceCorpsServerShared.Players;

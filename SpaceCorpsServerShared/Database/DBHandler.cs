@@ -3,7 +3,7 @@ using MySql.Data.MySqlClient;
 using SpaceCorpsServerShared.Players;
 
 namespace SpaceCorpsServerShared.Database;
-public class DBHandler(MySqlConnection connection, ILogger<DBHandler> logger) : IDBHandler
+public class DBHandler(MySqlConnection connection, ILogger<DBHandler> logger) : IDbHandler
 {
     private MySqlConnection _connection = connection;
     private ILogger<DBHandler> _logger = logger;
@@ -65,14 +65,14 @@ public class DBHandler(MySqlConnection connection, ILogger<DBHandler> logger) : 
         }
     }
 
-    public void SetMySQLConnection(MySqlConnection connection)
+    public void SetMySqlConnection(MySqlConnection connection)
     {
         this._connection = connection;
     }
 
-    public async Task<Dictionary<string, IPlayerEntityDTO>> GetPlayersStatsAsync()
+    public async Task<Dictionary<string, IPlayerEntityDto>> GetPlayersStatsAsync()
     {
-        var playersStats = new Dictionary<string, IPlayerEntityDTO>();
+        var playersStats = new Dictionary<string, IPlayerEntityDto>();
         const string query = "SELECT * FROM playerEntity";
 
         await using var command = new MySqlCommand(query, _connection);
@@ -85,7 +85,7 @@ public class DBHandler(MySqlConnection connection, ILogger<DBHandler> logger) : 
                 parameters.Add(reader.GetName(i), reader.GetValue(i));
             }
 
-            var playerStat = new PlayerEntityDTO(parameters);
+            var playerStat = new PlayerEntityDto(parameters);
 
             playersStats.Add(playerStat.Username, playerStat);
         }
