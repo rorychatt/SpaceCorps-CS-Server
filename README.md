@@ -5,22 +5,22 @@ SpaceCorps-CS-Server is a server application written in C#. This repository cont
 
 ## Features
 
- - [] Game Logic Management: Core functionalities for managing game rules and mechanics.
- - [] Data Management: Handles persistent data storage and retrieval.
- - [] Client-Server Communication: Facilitates interaction between the client application and the server.
+ - Game Logic Management: Core functionalities for managing game rules and mechanics.
+ - Data Management: Handles persistent data storage and retrieval.
+ - Client-Server Communication: Facilitates interaction between the client application and the server.
 
 ## Getting Started
 
-- [] Prerequisites
-    .NET SDK (version X.X or later)
+- Prerequisites
+    .NET SDK (version 8 or later)
   
 ## Installation
 ```dotnet run --project SpaceCorpsServerApp```
 
 ## Project Structure
- - [] SpaceCorpsServerApp: Main server application.
- - [] SpaceCorpsServerShared: Shared libraries and utilities.
- - [] SpaceCorpsServerTests: Test projects for ensuring code quality.
+ - SpaceCorpsServerApp: Main server application.
+ - SpaceCorpsServerShared: Shared libraries and utilities.
+ - SpaceCorpsServerTests: Test projects for ensuring code quality.
    
 ## Contributing
 Contributions are welcome! Please follow these steps:
