@@ -33,9 +33,9 @@ public class Db : IDb
         _connection.Close();
     }
 
-    public void SetDbHandler(IDbHandler _dbHandler)
+    public void SetDbHandler(IDbHandler dbHandler)
     {
-        this._dbHandler = _dbHandler;
+        this._dbHandler = dbHandler;
     }
 
     public IDbHandler GetDbHandler()

@@ -4,15 +4,10 @@ namespace SpaceCorpsServerShared.Items;
 
 public class ShipItem : IItem, IRewardable
 {
-    public int ItemId { get; init; }
+    public int ItemId { get; init; } = _getItemIdFromDB();
     public Guid PlayerId { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
 
-    public ShipItem()
-    {
-        ItemId = _getItemIdFromDB();
-    }
-
-    private int _getItemIdFromDB()
+    private static int _getItemIdFromDB()
     {
         return 1;
     }

@@ -9,9 +9,9 @@ namespace SpaceCorpsServerShared.Players
     {
         public Guid Id { get; }
         public Vector3 Position { get; set; }
-        private IInventory Inventory { get; } = new Inventory();
+        private Inventory Inventory { get; } = new Inventory();
 
-        private IStats Stats { get; } = new Stats();
+        private Stats Stats { get; } = new Stats();
 
         public Player()
         {

@@ -19,7 +19,7 @@ public class RewardServerTests
     public void TestItemReward()
     {
         var playerId = Guid.NewGuid();
-        var itemId = 1;
+        const int itemId = 1;
         var reward = new ItemReward(playerId, itemId);
         Assert.Equal(playerId, reward.PlayerId);
         Assert.Equal(itemId, reward.ItemId);
@@ -29,7 +29,7 @@ public class RewardServerTests
     public async void Adds_ItemReward_To_RewardServer()
     {
         var playerId = Guid.NewGuid();
-        var itemId = 1;
+        const int itemId = 1;
         var reward = new ItemReward(playerId, itemId);
         var rewardsServer = new RewardServer();
         await rewardsServer.CreateRewardAsync(playerId, reward);
