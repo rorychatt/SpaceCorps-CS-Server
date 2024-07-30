@@ -13,6 +13,31 @@ public class EntityTests
         var alien = new Alien();
         Assert.NotEqual(Guid.Empty, alien.Id);
     }
+    
+    [Fact]
+    public void Alien_ShouldImplement_IEntity()
+    {
+        var alien = new Alien();
+        Assert.IsAssignableFrom<IEntity>(alien);
+    }
+    
+    [Fact]
+    public void Alien_Position_ReturnsVector3()
+    {
+        var alien = new Alien();
+        Assert.Equal(Vector3.Zero, alien.Position);
+    }
+    
+    [Fact]
+    public void Alien_Position_Set()
+    {
+        var alien = new Alien();
+        var newPosition = new Vector3(1, 2, 3);
+        alien.Position = newPosition;
+        Assert.Equal(newPosition, alien.Position);
+    }
+    
+    
 }
 public class PlayerTests
 {
