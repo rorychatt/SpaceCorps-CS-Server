@@ -50,24 +50,27 @@ public class Stats : IStats
         return _thulium;
     }
 
-    public void SetCredits(int credits)
+    public IStats SetCredits(int credits)
     {
         _credits = credits;
+        return this;
     }
 
-    public int SetExperience(int experience)
+    public IStats SetExperience(int experience)
     {
         _experience = experience;
-        return _experience;
+        return this;
     }
 
-    public void SetHonor(int honor)
+    public IStats SetHonor(int honor)
     {
         _honor = honor;
+        return this;
     }
 
-    public void SetThulium(int thulium)
+    public IStats SetThulium(int thulium)
     {
         _thulium = thulium;
+        return this;
     }
 }

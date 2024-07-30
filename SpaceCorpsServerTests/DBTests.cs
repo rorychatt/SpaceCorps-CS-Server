@@ -7,7 +7,7 @@ public class DbTests
 {
     private const string ConnectionString = "Server=rorycraft.com;Database=spacecorps;Uid=server;Pwd=popapenis123;";
     private static readonly ILoggerFactory LoggerFactory = Microsoft.Extensions.Logging.LoggerFactory.Create(builder => builder.AddConsole());
-    private static readonly ILogger<DBHandler> Logger = LoggerFactory.CreateLogger<DBHandler>();
+    private static readonly ILogger<DbHandler> Logger = LoggerFactory.CreateLogger<DbHandler>();
     
     [Fact]
     public void CanConnect_ToDB()

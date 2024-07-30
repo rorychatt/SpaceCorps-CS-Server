@@ -7,13 +7,13 @@ public class Db : IDb
 {
     private readonly MySqlConnection _connection;
     private IDbHandler _dbHandler;
-    private readonly ILogger<DBHandler> _logger;
+    private readonly ILogger<DbHandler> _logger;
 
-    public Db(string connectionString, ILogger<DBHandler> logger)
+    public Db(string connectionString, ILogger<DbHandler> logger)
     {
         this._logger = logger;
         _connection = new MySqlConnection(connectionString);
-        _dbHandler = new DBHandler(_connection, logger);
+        _dbHandler = new DbHandler(_connection, logger);
     }
 
     public void OpenConnection()

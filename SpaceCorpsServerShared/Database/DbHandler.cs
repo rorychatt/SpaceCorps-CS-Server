@@ -3,7 +3,7 @@ using MySql.Data.MySqlClient;
 using SpaceCorpsServerShared.Players;
 
 namespace SpaceCorpsServerShared.Database;
-public class DBHandler(MySqlConnection connection, ILogger<DBHandler> logger) : IDbHandler
+public class DbHandler(MySqlConnection connection, ILogger<DbHandler> logger) : IDbHandler
 {
     public void CreateMissingTables()
     {
