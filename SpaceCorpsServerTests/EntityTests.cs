@@ -1,4 +1,5 @@
 using System.Numerics;
+using SpaceCorpsServerShared.Entity;
 using SpaceCorpsServerShared.Items;
 using SpaceCorpsServerShared.Players;
 
@@ -6,7 +7,12 @@ namespace SpaceCorpsServerTests;
 
 public class EntityTests
 {
-
+    [Fact]
+    public void Alien_Id_ReturnsGuid()
+    {
+        var alien = new Alien();
+        Assert.NotEqual(Guid.Empty, alien.Id);
+    }
 }
 public class PlayerTests
 {
