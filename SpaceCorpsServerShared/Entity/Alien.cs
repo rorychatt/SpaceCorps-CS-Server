@@ -14,6 +14,6 @@ public class Alien : IEntity, IKillable
     {
         StatsDrop = new Stats();
         Position = Vector3.Zero;
-        Guid.NewGuid();
+        Id = Guid.NewGuid();
     }
 }
