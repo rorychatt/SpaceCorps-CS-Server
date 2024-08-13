@@ -7,10 +7,11 @@ namespace SpaceCorpsServerShared;
 
 public class Server()
 {
-    private WebSocketServer WebSocketServer { get; set; } = null!;
-    public RewardServer RewardServer { get; set; } = new();
-    public StatisticsServer StatisticsServer { get; set; } = new();
-    public List<IWebSocketConnection> WebSocketConnections { get; set; } = [];
+    private WebSocketServer WebSocketServer { get; } = null!;
+    public RewardServer RewardServer { get; } = new();
+    public StatisticsServer StatisticsServer { get; } = new();
+    private readonly Dictionary<int, IWebSocketConnection> _webSocketConnections = [];
+    private readonly Dictionary<string, Player> _players = [];
 
     public Server(int? port = 8181) : this()
     {
@@ -21,9 +22,9 @@ public class Server()
     {
         WebSocketServer.Start(ws =>
         {
-            ws.OnOpen = () => { WebSocketConnections.Add(ws); };
+            ws.OnOpen = () => { _webSocketConnections.TryAdd(ws.GetHashCode(), ws); };
             ws.OnMessage = Console.WriteLine;
-            ws.OnClose = () => { WebSocketConnections.Remove(ws); };
+            ws.OnClose = () => { _webSocketConnections.Remove(ws.GetHashCode()); };
         });
     }
 
@@ -34,12 +35,12 @@ public class Server()
 
     public IEnumerable<Player> GetPlayers()
     {
-        throw new NotImplementedException();
+        return _players.Values;
     }
 
     public async Task IssueRewardAsync(Guid playerId, IRewardable reward)
     {
-        throw new NotImplementedException();
+        await RewardServer.CreateRewardAsync(playerId, reward);
     }
 
     public async Task ProcessTick()
