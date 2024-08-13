@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Logging;
-using Moq;
 using SpaceCorpsServerShared;
 
 namespace SpaceCorpsServerTests;
