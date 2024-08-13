@@ -15,8 +15,7 @@ public class ServerTests
     public void TestServer_Start_No_Crash()
     {
         const int port = 2000;
-        var loggerMock = new Mock<ILogger<Server>>();
-        var server = new Server(loggerMock.Object, port);
+        var server = new Server(port);
         server.Start();
         Assert.True(true);
     }
@@ -25,10 +24,9 @@ public class ServerTests
     public async void TestServer_Connects()
     {
         const int port = 2001;
-        var loggerMock = new Mock<ILogger<Server>>();
-        var server = new Server(loggerMock.Object, port);
+        var server = new Server(port);
 
-        server.Start([]);
+        server.Start();
         var client = new ClientWebSocket();
         await client.ConnectAsync(new Uri($"ws://localhost:{port}"), CancellationToken.None);
         Assert.Equal(WebSocketState.Open, client.State);
@@ -40,10 +38,9 @@ public class ServerTests
     public async void TestServer_CreatesPlayer_OnJoin()
     {
         const int port = 2002;
-        var loggerMock = new Mock<ILogger<Server>>();
-        var server = new Server(loggerMock.Object, port);
+        var server = new Server(port);
 
-        server.Start([]);
+        server.Start();
 
         var client = new ClientWebSocket();
         await client.ConnectAsync(new Uri($"ws://localhost:{port}"), CancellationToken.None);
@@ -60,10 +57,9 @@ public class ServerTests
     public async void TestServer_RegistersReward()
     {
         const int port = 2003;
-        var loggerMock = new Mock<ILogger<Server>>();
-        var server = new Server(loggerMock.Object, port);
+        var server = new Server(port);
 
-        server.Start([]);
+        server.Start();
 
         var client = new ClientWebSocket();
         await client.ConnectAsync(new Uri($"ws://localhost:{port}"), CancellationToken.None);
@@ -84,10 +80,9 @@ public class ServerTests
     public async void TestServer_IssuesAndExecutes_StatsReward()
     {
         const int port = 2005;
-        var loggerMock = new Mock<ILogger<Server>>();
-        var server = new Server(loggerMock.Object, port);
+        var server = new Server(port);
 
-        server.Start([]);
+        server.Start();
 
         var client = new ClientWebSocket();
         await client.ConnectAsync(new Uri($"ws://localhost:{port}"), CancellationToken.None);
@@ -99,9 +94,10 @@ public class ServerTests
 
         await server.IssueRewardAsync(player.Id, new StatsReward(player.Id, stats));
 
-        await server.ProcessRewardTickAsync();
+        await server.ProcessTick();
 
-        server.GetPlayerById(player.Id).GetStats().GetThulium().Should().Be(10000);
+        //TODO: fix this
+        server.GetPlayerById(player.Id)!.GetStats().GetThulium().Should().Be(10000);
 
         server.Stop();
     }

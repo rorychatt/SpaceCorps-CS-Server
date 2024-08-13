@@ -10,7 +10,7 @@ public class StatisticsServerTests
     {
         const int port = 3000;
         var loggerMock = new Mock<ILogger<Server>>();
-        var server = new Server(loggerMock.Object, port);
+        var server = new Server(port);
 
         var statisticsServer = server.GetStatisticsServer();
         Assert.NotNull(statisticsServer);
