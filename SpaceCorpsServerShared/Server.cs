@@ -9,6 +9,8 @@ public class Server()
 {
     private WebSocketServer WebSocketServer { get; set; } = null!;
     public RewardServer RewardServer { get; set; } = new();
+    public StatisticsServer StatisticsServer { get; set; } = new();
+    public List<IWebSocketConnection> WebSocketConnections { get; set; } = [];
 
     public Server(int? port = 8181) : this()
     {
@@ -19,7 +21,9 @@ public class Server()
     {
         WebSocketServer.Start(ws =>
         {
+            ws.OnOpen = () => { WebSocketConnections.Add(ws); };
             ws.OnMessage = Console.WriteLine;
+            ws.OnClose = () => { WebSocketConnections.Remove(ws); };
         });
     }
 
@@ -29,11 +33,6 @@ public class Server()
     }
 
     public IEnumerable<Player> GetPlayers()
-    {
-        throw new NotImplementedException();
-    }
-
-    public object? GetStatisticsServer()
     {
         throw new NotImplementedException();
     }

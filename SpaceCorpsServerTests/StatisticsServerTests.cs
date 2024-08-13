@@ -9,10 +9,9 @@ public class StatisticsServerTests
     public void TestStatisticsServer_Start_No_Crash()
     {
         const int port = 3000;
-        var loggerMock = new Mock<ILogger<Server>>();
         var server = new Server(port);
 
-        var statisticsServer = server.GetStatisticsServer();
+        var statisticsServer = server.StatisticsServer;
         Assert.NotNull(statisticsServer);
     }
 }
