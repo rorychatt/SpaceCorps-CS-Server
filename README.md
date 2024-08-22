@@ -1,3 +1,6 @@
+#UPDATE
+I had learned so many new things by this point, so I know that this code is just non modern. I will close this repo, and a newer version will appear in my profile. Please, use that instead.
+
 # SpaceCorps-CS-Server
 
 ## Overview
